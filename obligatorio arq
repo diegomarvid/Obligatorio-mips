@@ -13,6 +13,7 @@ enter: .asciiz "\n"
 
 #-------MAIN--------#
 
+menu_bienvenida:
 #Mensaje de bienvenida
 li $v0,4
 la $a0,bienvenido_str
@@ -21,6 +22,7 @@ syscall
 
 jal juego
 
+end:
 li $v0,10
 syscall
 
@@ -44,8 +46,6 @@ la $t0, secuencia
 li $a1,4
 li $v0,42
 syscall
-
-
 
 
 #Actualizo posicion de memoria para guardar
@@ -304,7 +304,6 @@ beq $a0,2,sonido_azul
 beq $a0,3,sonido_amarillo
 
 
-
 sonido_verde:
 
 li $v0,33
@@ -372,6 +371,7 @@ la $a0,modos_str
 syscall
 
 #en a1 guardo el status, 0 = OK
+beq $a1,2,juego_fin
 bnez $a1,modos
 
 #Evaluo que el modo este entre 1 y 3
