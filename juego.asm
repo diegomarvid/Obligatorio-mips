@@ -1,38 +1,92 @@
+.globl juego
+
 .data
 
-secuencia: .space 200
-bla: .space 100
-decisionstr: .asciiz "\nDesea volver a jugar? \n"
-instruccionstr: .asciiz "Apriete 1 si quiere volver a jugar, de lo contratrio apriete 0: \n"
-bienvenido_str: .asciiz "Bienvenido a Simon \n"
-pre_secuencia_str: .asciiz "La secuencia es: \n"
 modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
+pre_secuencia_str: .asciiz "La secuencia es: \n"
 enter: .asciiz "\n"
+
+secuencia: .space 200
 
 .text
 
-#-------MAIN--------#
+#-------------------------------------------------------------
+juego:
 
-menu_bienvenida:
-#Mensaje de bienvenida
+addiu $sp,$sp,-12
+sw $ra,($sp)
+sw $s1,4($sp)
+sw $s2,8($sp)
+
+#Guardo turno en s1
+li $s1,1
+
+modos:
+#Mensaje Modos
+li $v0,51
+la $a0,modos_str
+syscall
+
+#en a1 guardo el status, 0 = OK
+beq $a1,2,juego_fin
+bnez $a1,modos
+
+#Evaluo que el modo este entre 1 y 3
+bgt $a0,3,modos
+blt $a0,1,modos
+
+#En s2 esta el modo de juego
+move $s2,$a0
+
+game_loop:
+
+#ACTUALIZO SECUENCIA
+move $a0,$s1
+jal extender_secuencia
+
+#print provisorio pre-secuencia
 li $v0,4
-la $a0,bienvenido_str
+la $a0,pre_secuencia_str
 syscall
 
+#IMPRIMO SECUENCIA
+move $a0,$s1
+la $a1,secuencia
+jal imprimir_secuencia
 
-jal juego
-
-end:
-li $v0,10
+#print enter
+li $v0,4
+la $a0,enter
 syscall
 
+#INGRESO Y VERIFICO SECUENCIA
+move $a0,$s1
+move $a1,$s2
+jal usuario_juega
+
+#DECIDO SI SEGUIR JUGANDO
+beqz $v0,decision_juego
+
+#ACTUALIZO TURNO
+addiu $s1,$s1,1
+
+j game_loop
 
 
+decision_juego:
+
+jal volver_jugar
+
+bnez $v0,juego
 
 
+juego_fin:
 
-
-#-----FUNCIONES------#
+lw $ra,($sp)
+lw $s1,4($sp)
+lw $s2,8($sp)
+addiu $sp,$sp,12
+jr $ra
 
 #-------------------------------------------------------------
 
@@ -56,47 +110,7 @@ sb $a0,-1($t0)
 
 jr $ra
 
-#--------------------------------------------------------------
-
-imprimir_secuencia:
-
-addiu $sp,$sp,-12
-sw $ra,($sp)
-sw $s0,4($sp)
-sw $s2,8($sp)
-
-la $s0, secuencia
-move $s2, $a0 #Numero de turno, se usa para saber cuantas veces imprimir
-
-loop:
-
-beqz $s2, imprimir_fin
-
-lb $t1,($s0)
-
-li $v0,1
-move $a0,$t1
-syscall
-
-move $a0,$t1
-jal sonido_secuencia
-
-
-addiu $s2,$s2,-1
-addiu $s0,$s0,1
-
-j loop
-
-
-imprimir_fin:
-
-lw $ra,($sp)
-lw $s0,4($sp)
-lw $s2,8($sp)
-addiu $sp,$sp,12
-jr $ra
-
-#---------------------------------------------------------------
+#---------------------------------------------------------------------
 
 usuario_juega:
 
@@ -275,164 +289,4 @@ modo_rewind:
 
  jr $ra
 
-#---------------------------------------------------------------------
-volver_jugar:
-
-li $v0,4
-la $a0,decisionstr
-syscall
-
-li $v0,4
-la $a0,instruccionstr
-syscall
-
-li $v0,5
-syscall
-
-jr $ra
-
-
-#------------------------------------------------------------
-
-sonido_secuencia:
-
-#en $a0 me llego el color
-
-beq $a0,0,sonido_verde
-beq $a0,1,sonido_rojo
-beq $a0,2,sonido_azul
-beq $a0,3,sonido_amarillo
-
-
-sonido_verde:
-
-li $v0,33
-li $a0,60
-li $a1,500
-li $a2,5
-li $a3,100
-syscall
-
-j sonido_secuencia_fin
-
-sonido_rojo:
-
-li $v0,33
-li $a0,69
-li $a1,500
-li $a2,5
-li $a3,100
-syscall
-
-j sonido_secuencia_fin
-
-sonido_azul:
-
-li $v0,33
-li $a0,64
-li $a1,500
-li $a2,5
-li $a3,100
-syscall
-
-j sonido_secuencia_fin
-
-sonido_amarillo:
-
-li $v0,33
-li $a0,61
-li $a1,500
-li $a2,5
-li $a3,100
-syscall
-
-j sonido_secuencia_fin
-
-
-sonido_secuencia_fin:
-
-jr $ra
-
-#-------------------------------------------------------------
-juego:
-
-addiu $sp,$sp,-12
-sw $ra,($sp)
-sw $s1,4($sp)
-sw $s2,8($sp)
-
-#Guardo turno en s1
-li $s1,1
-
-modos:
-#Mensaje Modos
-li $v0,51
-la $a0,modos_str
-syscall
-
-#en a1 guardo el status, 0 = OK
-beq $a1,2,juego_fin
-bnez $a1,modos
-
-#Evaluo que el modo este entre 1 y 3
-bgt $a0,3,modos
-blt $a0,1,modos
-
-#En s2 esta el modo de juego
-move $s2,$a0
-
-game_loop:
-
-
-#ACTUALIZO SECUENCIA
-move $a0,$s1
-jal extender_secuencia
-
-#print provisorio pre-secuencia
-li $v0,4
-la $a0,pre_secuencia_str
-syscall
-
-#IMPRIMO SECUENCIA
-move $a0,$s1
-jal imprimir_secuencia
-
-#print enter
-li $v0,4
-la $a0,enter
-syscall
-
-#INGRESO Y VERIFICO SECUENCIA
-move $a0,$s1
-move $a1,$s2
-jal usuario_juega
-
-#DECIDO SI SEGUIR JUGANDO
-beqz $v0,decision_juego
-
-#ACTUALIZO TURNO
-addiu $s1,$s1,1
-
-j game_loop
-
-
-decision_juego:
-
-jal volver_jugar
-
-bnez $v0,juego
-
-
-juego_fin:
-
-lw $ra,($sp)
-lw $s1,4($sp)
-lw $s2,8($sp)
-addiu $sp,$sp,12
-jr $ra
-
-
-
-
-
-
+#----------------------------------------------------------------
