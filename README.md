@@ -7,15 +7,15 @@ Obligatorio de arquitectura de sistemas digitales-Simon
 
 Para ver el juego, se debe entrar a **Bitmap Display** con las siguientes configuraciones:
 
-* Unit Width in Pixels: 
+* Unit Width in Pixels: 32
 
-* Unit Height in Pixels:
+* Unit Height in Pixels: 32
 
-* Display Width in Pixels:
+* Display Width in Pixels: 256
 
-* Display Height in Pixels:
+* Display Height in Pixels: 256
 
-* Base address for display:
+* Base address for display: Static data
 
 ### Panel de Control
 
