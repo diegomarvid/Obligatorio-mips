@@ -44,20 +44,11 @@ game_loop:
 move $a0,$s1
 jal extender_secuencia
 
-#print provisorio pre-secuencia
-li $v0,4
-la $a0,pre_secuencia_str
-syscall
-
 #IMPRIMO SECUENCIA
 move $a0,$s1
 la $a1,secuencia
 jal imprimir_secuencia
 
-#print enter
-li $v0,4
-la $a0,enter
-syscall
 
 #INGRESO Y VERIFICO SECUENCIA
 move $a0,$s1
@@ -77,7 +68,7 @@ decision_juego:
 
 jal volver_jugar
 
-bnez $v0,juego
+beqz $v0,juego
 
 
 juego_fin:
@@ -139,7 +130,7 @@ juega_rewind:
 
 juega_trickster:
 
- #jal modo_trickster
+ jal modo_trickster
 
  j usuario_juega_final
 
@@ -154,11 +145,12 @@ jr $ra
 
 modo_normal:
 
- addiu $sp,$sp,-16
+ addiu $sp,$sp,-20
  sw $ra,($sp)
  sw $s0,4($sp)
  sw $s1,8($sp)
  sw $s2,12($sp)
+ sw $s3,16($sp)
  
 
  li $s0,0     #Sub turnos del jugador -> numero de jugada
@@ -171,19 +163,24 @@ modo_normal:
   beq $s0,$s1,modo_normal_fin
 
   #Juega turno
-  li $v0,5
-  syscall
+  jal get_play
   
-  move $t3,$v0 #En v0 queda el valor de la jugada
+  move $s3,$v0 #En v0 queda el valor de la jugada
+  
+ 
+  beq $s3,-1,normal_error
+  
+  move $a0,$s3
+  jal display_light
   
   lb $t4,($s2) #Valor de la secuencia real
 
   #Me fijo si la jugada es buena 
-  beq $t3,$t4,seguir_normal 
+  beq $s3,$t4,seguir_normal 
 
    #-----ERROR-XXXX-----------#
 
-   
+   normal_error:   
    #Sonido erroneo
    li $v0,33
    li $a0,58
@@ -200,7 +197,7 @@ modo_normal:
  seguir_normal:
  
   #Sonido
-  move $a0,$t3
+  move $a0,$s3
   jal sonido_secuencia
 
   addiu $s0,$s0,1
@@ -214,7 +211,8 @@ modo_normal:
   lw $s0,4($sp)
   lw $s1,8($sp)
   lw $s2,12($sp)
-  addiu $sp,$sp,16
+  lw $s3,16($sp)
+  addiu $sp,$sp,20
 
   jr $ra
 
@@ -222,11 +220,12 @@ modo_normal:
 
 modo_rewind:
 
- addiu $sp,$sp,-16
+ addiu $sp,$sp,-20
  sw $ra,($sp)
  sw $s0,4($sp)
  sw $s1,8($sp)
  sw $s2,12($sp)
+ sw $s3,16($sp)
 
  li $s0,0     #Sub turnos del jugador - cada jugada
  move $s1,$a0 #Turno en el que estoy
@@ -241,19 +240,23 @@ modo_rewind:
   beq $s0,$s1,modo_rewind_fin
 
   #Juega turno
-  li $v0,5
-  syscall
+  
+  jal get_play
 
-  move $t3,$v0 #En v0 queda el valor de la jugada
+  move $s3,$v0 #En v0 queda el valor de la jugada
+  
+  beq $s3,-1,rewind_error
+  
+  jal display_light
   
   lb $t4,($s2) #Valor de la secuencia real
 
   #Me fijo si la jugada es buena 
-  beq $t3,$t4,seguir_rewind 
+  beq $s3,$t4,seguir_rewind 
   
    #-----ERROR-XXXX-----------#
 
-   
+   rewind_error:
    #Sonido erroneo
    li $v0,33
    li $a0,58
@@ -271,7 +274,7 @@ modo_rewind:
  seguir_rewind:
  
   #Sonido
-  move $a0,$t3
+  move $a0,$s3
   jal sonido_secuencia
 
   addiu $s0,$s0,1
@@ -285,8 +288,90 @@ modo_rewind:
  lw $s0,4($sp)
  lw $s1,8($sp)
  lw $s2,12($sp)
- addiu $sp,$sp,16
+ lw $s3,16($sp)
+ addiu $sp,$sp,20
 
  jr $ra
 
 #----------------------------------------------------------------
+
+modo_trickster:
+
+ addiu $sp,$sp,-20
+ sw $ra,($sp)
+ sw $s0,4($sp)
+ sw $s1,8($sp)
+ sw $s2,12($sp)
+ sw $s3,16($sp)
+ 
+
+ li $s0,0     #Sub turnos del jugador -> numero de jugada
+ move $s1,$a0 #Turno en el que estoy
+ la $s2,secuencia
+ 
+  #Re organizo colores
+ li $a0,3
+ jal refresh_coordinates
+ jal refresh_display
+ 
+
+ 
+ trickster_loop:
+
+  beq $s0,$s1,modo_trickster_fin
+
+  #Juega turno
+  
+  jal get_play
+  
+
+  move $s3,$v0 #En v0 queda el valor de la jugada
+  
+  beq $s3,-1,trickster_error
+  
+  move $a0,$s3
+  jal display_light
+  
+  lb $t4,($s2) #Valor de la secuencia real
+
+  #Me fijo si la jugada es buena 
+  beq $s3,$t4,seguir_trickster 
+  
+   #-----ERROR-XXXX-----------#
+
+   trickster_error:
+   #Sonido erroneo
+   li $v0,33
+   li $a0,58
+   li $a1,500
+   li $a2,56
+   li $a3,100
+   syscall
+
+   #Si no le emboco termino
+   li $v0,0
+   j modo_trickster_fin
+   
+   #------BIEN---------------#
+
+ seguir_trickster:
+ 
+  #Sonido
+  move $a0,$s3
+  jal sonido_secuencia
+
+  addiu $s0,$s0,1
+  addiu $s2,$s2,1
+  li $v0,1 #v0 = 1, le emboque
+  j trickster_loop
+
+ modo_trickster_fin:
+ 
+ lw $ra,($sp)
+ lw $s0,4($sp)
+ lw $s1,8($sp)
+ lw $s2,12($sp)
+ lw $s3,16($sp)
+ addiu $sp,$sp,20
+
+ jr $ra

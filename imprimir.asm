@@ -29,9 +29,12 @@ beqz $s2, imprimir_fin
 
 lb $t1,($s0)
 
-li $v0,1
+
+
+#li $v0,1
 move $a0,$t1
-syscall
+jal display_light
+#syscall
 
 move $a0,$t1
 jal sonido_secuencia
@@ -55,16 +58,11 @@ jr $ra
 
 volver_jugar:
 
-li $v0,4
+li $v0,50
 la $a0,decisionstr
 syscall
 
-li $v0,4
-la $a0,instruccionstr
-syscall
-
-li $v0,5
-syscall
+move $v0,$a0
 
 jr $ra
 

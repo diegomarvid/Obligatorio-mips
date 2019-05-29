@@ -12,12 +12,16 @@ bienvenido_str: .asciiz "Bienvenido a Simon \n"
 main:
 
 #Mensaje de bienvenida
-li $v0,4
+li $v0,55
 la $a0,bienvenido_str
+li $a1,1
 syscall
 
+jal refresh_display
 
-jal juego
+jal juego 
+
+
 
 li $v0,10
 syscall
