@@ -25,6 +25,7 @@
 #Display Height in pixels: 256
 #Base address: static data
 
+.align 2
 display: .space 256
 
 green_cord: .word 0
@@ -140,6 +141,9 @@ mflo $t5
 
 
 la $t2,display #Direccion para pintar filas
+
+#Intento arreglar desfasaje de bitmap con el align
+addiu $t2,$t2,-24
 
 bgt $a0,1,cuadrado_esquinas_abajo
 
