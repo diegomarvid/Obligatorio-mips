@@ -22,7 +22,6 @@ jal refresh_display
 jal juego 
 
 
-
 li $v0,10
 syscall
 

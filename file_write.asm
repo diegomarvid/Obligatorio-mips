@@ -1,13 +1,21 @@
+.globl cargar_archivo
 .data
 
 file_name: .asciiz "D:\highscore.txt"
-file_data: .space 4096
+file_data: .space 256
 error_str: .asciiz "error lectura"
-file_str: .asciiz "Effa se la come"
 
 .text
 
-## CARGAR ARCHIVO ##
+##********CARGAR ARCHIVO************** ##
+
+# $a0 -> direccion string para escribir
+# $a1 -> cantidad caracteres a escribir
+
+cargar_archivo:
+
+move $t2,$a0
+move $t3,$a1
 
 li $v0,13
 la $a0,file_name
@@ -22,31 +30,27 @@ move $t0,$v0 #Devuelve el archivo abierto
 
 li $v0,15
 move $a0,$t0
-la $a1,file_str
-li $a2,15 #Cantidad caracteres para leer max
+la $a1,($t2)
+move $a2,$t3 #Cantidad caracteres para leer max
 syscall
 
-move $t1,$v0 #Devuelve cantidad caracteres leidos
+move $t1,$v0 #Devuelve cantidad caracteres escritos
              # 0 -> Nada, -1 -> error
              
-bltz $t1,error             
+bgez $t1,cargar_archivo_fin            
+
+li $v0,4
+la $a0,error_str
+syscall                                                  
              
+cargar_archivo_fin:
+                    
 ## CERRAR ARCHIVO ##
 
 li $v0,16
 move $a0,$t0
 syscall
 
-
-li $v0,10
-syscall
+jr $ra
 
 
-error:
-
-li $v0,4
-la $a0,error_str
-syscall
-
-li $v0,10
-syscall

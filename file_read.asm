@@ -1,7 +1,7 @@
 .data
-
-file_name: .asciiz ".\highscore.txt"
-file_data: .space 4096
+.align 2
+file_name: .asciiz "D:\highscore.txt"
+file_data: .space 256
 error_str: .asciiz "error lectura"
 file_str: .asciiz "Effa se la come"
 

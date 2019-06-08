@@ -1,13 +1,14 @@
 .globl jugadores
-.globl highscores_str
-
+.globl highscore_str
+.globl agregar_highscore
+.globl crear_jugador
 .data
 
 #Creo poisicion en memoria para guardar el jugador y su highscore
 #A(1b)A(2b)A(3b)Puntaje(4b)
 
 jugadores: .space 40
-highscores_str: .space 80
+highscore_str: .space 256
 
 
 jugador_nombre: .space 4
@@ -22,15 +23,21 @@ jugador_actual: .word
 li $a0,3
 jal crear_jugador
 
-li $a0,5
-jal crear_jugador
+#li $a0,5
+#jal crear_jugador
 
-li $a0,4
-jal crear_jugador
+#li $a0,4
+#jal crear_jugador
 
-li $a0,3
-jal crear_jugador
+#li $a0,3
+#jal crear_jugador
 
+
+jal highscore_str_txt
+
+la $a0,highscore_str
+li $a1,256
+jal cargar_archivo
 
 li $v0,10
 syscall
@@ -267,8 +274,184 @@ sb $a0,($t3)
 jr $ra
 
 
+#******	CREAR STRING HIGHSCORE PARA TXT*******#
+
+highscore_str_txt:
+
+addiu $sp,$sp,-16
+sw $ra,($sp)
+sw $s0,4($sp)
+sw $s1,8($sp)
+sw $s2,12($sp)
+
+la $s0,highscore_str
+la $s1,jugadores
+
+#Contador para imprimir 10 rankings
+li $s2,0
+
+highscore_str_loop:
+
+beq $s2,10,highscore_str_txt_fin
+
+move $a0,$s2
+jal escribir_ranking
+
+addiu $s2,$s2,1
+
+j highscore_str_loop
+
+highscore_str_txt_fin:
+
+lw $ra,($sp)
+lw $s0,4($sp)
+lw $s1,8($sp)
+lw $s2,12($sp)
+addiu $sp,$sp,16
+
+jr $ra
+
+#********ESCRIBIR RANKING********#
+
+# $a0 -> ranking en el que estoy
+
+escribir_ranking:
+
+addiu $sp,$sp,-12
+sw $ra,($sp)
+sw $s0,4($sp)
+sw $s1,8($sp)
+
+la $s0,highscore_str
+la $s1,jugadores
+
+#Calculo donde escribir en memoria
+
+#Jugadores:
+li $t0,4
+multu $a0,$t0
+mflo $t0
+
+addu $s1,$s1,$t0 #Empiezo en mi ranking
+
+#Highscore str:
+li $t0,11 #Ej: 01-ABC-123\n
+multu $a0,$t0
+mflo $t0
+addu $s0,$s0,$t0 #Empiezo en mi ranking
 
 
+
+#Escribo numero de ranking
+
+beq $a0,9,escribir_10
+
+#Guardo 0
+li $t0,48
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Guardo numero ranking
+addiu $t0,$a0,49
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+j escribir_nombre
+
+escribir_10:
+
+#Guardo 1
+li $t0,49
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Guardo 0
+li $t0,48
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Por ahora el txt es: 05
+
+escribir_nombre:
+
+#Escribo "-"
+
+li $t0,45
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Loop nombre:
+
+li $t0,0
+addiu $s1,$s1,1
+
+escribir_nombre_loop:
+
+beq $t0,3,escribir_puntaje
+
+
+lb $t2,($s1) #Mi letra
+
+sb $t2,($s0) 
+addiu $s0,$s0,1
+
+
+
+addiu $t0,$t0,1
+addiu $s1,$s1,1
+
+j escribir_nombre_loop
+
+
+
+escribir_puntaje:
+
+#Escribo "-"
+
+li $t0,45
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Cambio el puntero para apuntar al puntaje
+addiu $s1,$s1,-4
+
+lb $t0,($s1)
+addiu $t0,$t0,48
+sb $t0,($s0)
+
+addiu $s0,$s0,1
+
+#Escribo dos . para rellenar
+
+li $t0,48
+sb $t0,($s0)
+addiu $s0,$s0,1
+
+li $t0,48
+sb $t0,($s0)
+addiu $s0,$s0,1
+
+#escribo \n 
+li $t0,10
+sb $t0,($s0)
+
+
+
+
+escribir_ranking_fin:
+
+lw $ra,($sp)
+lw $s0,4($sp)
+lw $s1,8($sp)
+addiu $sp,$sp,12
+
+jr $ra
 
 
 
