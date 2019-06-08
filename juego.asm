@@ -64,6 +64,7 @@ addiu $s1,$s1,1
 j game_loop
 
 
+
 decision_juego:
 
 jal volver_jugar
@@ -72,6 +73,9 @@ beqz $v0,juego
 
 
 juego_fin:
+
+move $a0,$s1
+#Agregar highscore
 
 lw $ra,($sp)
 lw $s1,4($sp)
