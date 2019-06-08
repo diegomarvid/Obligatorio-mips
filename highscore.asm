@@ -8,7 +8,7 @@
 #A(1b)A(2b)A(3b)Puntaje(4b)
 
 jugadores: .space 40
-highscore_str: .space 256
+highscore_str: .space 100
 
 
 jugador_nombre: .space 4
@@ -20,7 +20,7 @@ jugador_actual: .word
 
 .text
 
-li $a0,3
+li $a0,99
 jal crear_jugador
 
 #li $a0,5
@@ -36,7 +36,7 @@ jal crear_jugador
 jal highscore_str_txt
 
 la $a0,highscore_str
-li $a1,256
+li $a1,100
 jal cargar_archivo
 
 li $v0,10
@@ -221,8 +221,16 @@ syscall
 
 bnez $a1,pedir_nombre
 
+jal controlar_nombre
+beqz $v0,pedir_nombre
+
+
+
+
 move $a0,$s0
 jal ingresar_jugador_sistema
+
+
 
 
 jal agregar_highscore
@@ -273,6 +281,44 @@ sb $a0,($t3)
 
 jr $ra
 
+#**************CONTROLAR NOMBRE***************#
+
+controlar_nombre:
+
+li $t0,0
+la $t2,jugador_nombre
+li $v0,1
+
+controlar_nombre_loop:
+
+beq $t0,3,controlar_nombre_fin
+
+lb $t1,($t2)
+
+blt $t1,65,controlar_nombre_error
+bgt $t1,90,controlar_minuscula
+
+j letra_deseada
+
+controlar_minuscula:
+blt $t1,97,controlar_nombre_error
+bgt $t1,122,controlar_nombre_error
+
+letra_deseada:
+li $v0,1
+
+addiu $t0,$t0,1
+addiu $t2,$t2,1
+
+j controlar_nombre_loop
+
+controlar_nombre_error:
+li $v0,0
+
+
+controlar_nombre_fin:
+
+jr $ra
 
 #******	CREAR STRING HIGHSCORE PARA TXT*******#
 
@@ -335,7 +381,7 @@ mflo $t0
 addu $s1,$s1,$t0 #Empiezo en mi ranking
 
 #Highscore str:
-li $t0,11 #Ej: 01-ABC-123\n
+li $t0,10 #Ej: 01-ABC-123\n
 multu $a0,$t0
 mflo $t0
 addu $s0,$s0,$t0 #Empiezo en mi ranking
@@ -388,7 +434,7 @@ addiu $s0,$s0,1
 #Loop nombre:
 
 li $t0,0
-addiu $s1,$s1,1
+addiu $s1,$s1,3
 
 escribir_nombre_loop:
 
@@ -397,13 +443,17 @@ beq $t0,3,escribir_puntaje
 
 lb $t2,($s1) #Mi letra
 
+bnez $t2,escribir_nombre_seguir
+
+li $t2,46
+
+escribir_nombre_seguir:
+
 sb $t2,($s0) 
 addiu $s0,$s0,1
 
-
-
 addiu $t0,$t0,1
-addiu $s1,$s1,1
+addiu $s1,$s1,-1
 
 j escribir_nombre_loop
 
@@ -418,31 +468,19 @@ sb $t0,($s0)
 
 addiu $s0,$s0,1
 
-#Cambio el puntero para apuntar al puntaje
-addiu $s1,$s1,-4
 
-lb $t0,($s1)
-addiu $t0,$t0,48
-sb $t0,($s0)
+lb $a0,($s1)
+jal parse_string
 
+sb $v1,($s0)
+addiu $s0,$s0,1
+sb $v0,($s0)
 addiu $s0,$s0,1
 
-#Escribo dos . para rellenar
-
-li $t0,48
-sb $t0,($s0)
-addiu $s0,$s0,1
-
-li $t0,48
-sb $t0,($s0)
-addiu $s0,$s0,1
 
 #escribo \n 
 li $t0,10
 sb $t0,($s0)
-
-
-
 
 escribir_ranking_fin:
 
@@ -450,6 +488,24 @@ lw $ra,($sp)
 lw $s0,4($sp)
 lw $s1,8($sp)
 addiu $sp,$sp,12
+
+jr $ra
+
+
+#****Parse string******"
+
+# $a0 -> recibe int
+# $v0 -> devuelve el primer digito
+# $v1 -> devuelve el segundo digito
+
+parse_string:
+
+rem $v0,$a0,10
+addiu $v0,$v0,48
+div $v1,$a0,10
+addiu $v1,$v1,48
+
+parse_string_fin:
 
 jr $ra
 
