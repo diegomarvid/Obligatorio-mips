@@ -1,11 +1,16 @@
+
+#Funciones
 .globl juego
+
+#Data
+.globl modos_str
+.globl secuencia
 
 .data
 
+.align 2
 modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
-pre_secuencia_str: .asciiz "La secuencia es: \n"
-enter: .asciiz "\n"
-
+.align 2
 secuencia: .space 200
 
 .text
@@ -40,6 +45,10 @@ move $s2,$a0
 
 game_loop:
 
+#VERIFICO SI GANO
+beq $s1,99,juego_gane
+
+
 #ACTUALIZO SECUENCIA
 move $a0,$s1
 jal extender_secuencia
@@ -67,15 +76,24 @@ j game_loop
 
 decision_juego:
 
+move $a0,$s1
+addiu $a0,$a0,-1 
+#Agregar highscore
+jal actualizar_highscore
+
 jal volver_jugar
 
-beqz $v0,juego
+beqz $v0,juego #0 -> seguir jugando, 1 -> terminar
 
+j juego_fin
+
+juego_gane:
+
+#Imprimir mensaje
 
 juego_fin:
 
-move $a0,$s1
-#Agregar highscore
+
 
 lw $ra,($sp)
 lw $s1,4($sp)

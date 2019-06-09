@@ -1,10 +1,16 @@
+
+#Funciones
 .globl imprimir_secuencia
 .globl volver_jugar
 
+
+#Data
+.globl decisionstr
+
 .data
 
+.align 2
 decisionstr: .asciiz "\nDesea volver a jugar? \n"
-instruccionstr: .asciiz "Apriete 1 si quiere volver a jugar, de lo contratrio apriete 0: \n"
 
 .text
 

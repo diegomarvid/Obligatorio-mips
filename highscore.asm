@@ -1,20 +1,28 @@
+
+#Funciones
+.globl actualizar_highscore
+
+#Data
 .globl jugadores
 .globl highscore_str
-.globl agregar_highscore
-.globl crear_jugador
+.globl jugador_nombre
+.globl ingreso_nombre_str
+.globl jugador_actual
+
+
 .data
 
 #Creo poisicion en memoria para guardar el jugador y su highscore
 #A(1b)A(2b)A(3b)Puntaje(4b)
-
+.align 2
 jugadores: .space 40
+.align 2
 highscore_str: .space 100
 
-
+.align 2
 jugador_nombre: .space 4
-
+.align 2
 ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: " 
-
 
 jugador_actual: .word
 
@@ -43,6 +51,34 @@ li $v0,10
 syscall
 
 
+
+
+#*********METODO QUE JUNTA TODO**********#
+
+# $a0 -> puntaje
+
+
+actualizar_highscore:
+
+addiu $sp,$sp,-8
+sw $ra,($sp)
+
+
+jal crear_jugador
+
+jal highscore_str_txt
+
+la $a0,highscore_str
+li $a1,100
+jal cargar_archivo
+
+
+actualizar_highscore_fin:
+
+lw $ra,($sp)
+addiu $sp,$sp,8
+
+jr $ra
 
 
 #**********AGREGAR HIGHSCORE*************#

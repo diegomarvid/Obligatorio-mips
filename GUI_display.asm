@@ -8,14 +8,19 @@
 .eqv yellow_light 0xFFFF99
 .eqv blue_light   0x1E90FF
 
+
+#Funciones
+.globl refresh_coordinates
+.globl refresh_display
+.globl display_light
+
+#Data
+#.globl display
+
 .globl green_cord
 .globl red_cord
 .globl yellow_cord
 .globl blue_cord
-
-.globl refresh_coordinates
-.globl refresh_display
-.globl display_light
 
 .data
 
@@ -26,7 +31,7 @@
 #Base address: static data
 
 .align 2
-display: .space 256
+#display: .space 256
 
 green_cord: .word 0
 red_cord: .word 1
@@ -143,7 +148,7 @@ mflo $t5
 la $t2,display #Direccion para pintar filas
 
 #Intento arreglar desfasaje de bitmap con el align
-addiu $t2,$t2,-24
+addiu $t2,$t2,0
 
 bgt $a0,1,cuadrado_esquinas_abajo
 
