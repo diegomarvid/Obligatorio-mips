@@ -1,4 +1,4 @@
-
+.globl leer_archivo
 
 .text
 
