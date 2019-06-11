@@ -15,12 +15,7 @@
 .globl display_light
 
 #Data
-#.globl display
 
-.globl green_cord
-.globl red_cord
-.globl yellow_cord
-.globl blue_cord
 
 .data
 
@@ -30,13 +25,8 @@
 #Display Height in pixels: 256
 #Base address: static data
 
-.align 2
 #display: .space 256
 
-green_cord: .word 0
-red_cord: .word 1
-blue_cord: .word 2
-yellow_cord: .word 3
 
 .text
 

@@ -2,16 +2,8 @@
 #Funciones
 .globl juego
 
-#Data
-.globl modos_str
-.globl secuencia
-
 .data
 
-.align 2
-modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
-.align 2
-secuencia: .space 200
 
 .text
 
@@ -40,8 +32,16 @@ bnez $a1,modos
 bgt $a0,3,modos
 blt $a0,1,modos
 
+
+
 #En s2 esta el modo de juego
 move $s2,$a0
+
+#Si es trickster ya lo hace por defecto
+beq $a0,3,game_loop
+jal refresh_coordinates
+jal refresh_display
+
 
 game_loop:
 

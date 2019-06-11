@@ -3,14 +3,9 @@
 .globl imprimir_secuencia
 .globl volver_jugar
 
-
-#Data
-.globl decisionstr
-
 .data
 
-.align 2
-decisionstr: .asciiz "\nDesea volver a jugar? \n"
+
 
 .text
 

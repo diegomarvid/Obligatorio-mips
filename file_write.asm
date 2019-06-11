@@ -2,16 +2,10 @@
 #Funciones
 .globl cargar_archivo
 
-#Data
-.globl file_name
-.globl file_data
-.globl error_str
 
 .data
 
-file_name: .asciiz "D:\highscore.txt"
-file_data: .space 120
-error_str: .asciiz "error lectura"
+
 
 .text
 
