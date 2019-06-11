@@ -13,12 +13,14 @@ li $a1,0 # 0 -> leer
 li $a2,0 # 0 -> ignorar modo
 syscall
 
-move $t0,$v0 #Devuelve el archivo abierto
+move $t7,$v0 #Devuelve el archivo abierto
+
+bltz $t7,leer_archivo_error
 
 ## LEER ARCHIVO ##
 
 li $v0,14
-move $a0,$t0
+move $a0,$t7
 la $a1,file_data
 li $a2,100 #Cantidad caracteres para leer max
 syscall
@@ -26,7 +28,7 @@ syscall
 move $t1,$v0 #Devuelve cantidad caracteres leidos
              # 0 -> Nada, -1 -> error
 
-bltz $t1,leer_archivo_error
+
 
 
 ## MANEJO DE ARCHIVO ##
@@ -40,7 +42,8 @@ leer_archivo_loop:
 beq $t2,10,leer_archivo_loop_fin
 
 #Empiezo a cargar de la ultima letra
-addiu $t0,$t0,6
+addiu $t0,$t0,3
+addiu $t4,$t4,3
 
 #Loop nombre
 
@@ -53,8 +56,8 @@ beq $t3,3,leer_archivo_puntaje
 lb $t5,($t0)
 sb $t5,($t4)
 
-addiu $t4,$t4,1
-addiu $t0,$t0,-1
+addiu $t4,$t4,-1
+addiu $t0,$t0,1
 addiu $t3,$t3,1
 
 j leer_archivo_nombre_loop
@@ -62,7 +65,8 @@ j leer_archivo_nombre_loop
 leer_archivo_puntaje:
 
 #Muevo puntero hacia el puntaje
-addiu $t0,$t0,5
+addiu $t0,$t0,1
+
 
 lb $t5,($t0)
 
@@ -86,6 +90,7 @@ sb $t3,($t4)
 
 #Dejo puntero en el ranking del proximo
 addiu $t0,$t0,2
+addiu $t4,$t4,4
 
 addiu $t2,$t2,1
 
@@ -96,23 +101,24 @@ leer_archivo_loop_fin:
 ## CERRAR ARCHIVO ##
 
 li $v0,16
-move $a0,$t0
+move $a0,$t7
 syscall
 
-li $v0,1
+li $v1,1
 
+j leer_archivo_fin
 
 leer_archivo_error:
 
-## CERRAR ARCHIVO ##
+li $v1,0
 
 li $v0,16
-move $a0,$t0
+li $a0,3
 syscall
-
-li $v0,0
 
 leer_archivo_fin:
 
+
+move $v0,$v1
 
 jr $ra

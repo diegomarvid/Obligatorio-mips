@@ -1,7 +1,7 @@
 
 #Funciones
 .globl actualizar_highscore
-
+.globl highscore_str_txt
 .data
 
 

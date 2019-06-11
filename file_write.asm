@@ -16,8 +16,8 @@
 
 cargar_archivo:
 
-move $t2,$a0
-move $t3,$a1
+#move $t2,$a0
+#move $t3,$a1
 
 li $v0,13
 la $a0,file_name
@@ -32,8 +32,8 @@ move $t0,$v0 #Devuelve el archivo abierto
 
 li $v0,15
 move $a0,$t0
-la $a1,($t2)
-move $a2,$t3 #Cantidad caracteres para leer max
+la $a1,highscore_str
+li $a2,100 #Cantidad caracteres para leer max
 syscall
 
 move $t1,$v0 #Devuelve cantidad caracteres escritos

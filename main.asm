@@ -46,7 +46,7 @@ highscore_str: .space 100
 jugador_nombre: .space 4
 #File_write_read
 .align 2
-file_data: .space 120
+file_data: .space 100
 
 
 #Words
@@ -76,9 +76,9 @@ ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: "
 decisionstr: .asciiz "Desea volver a jugar? \n"
 #File_write_read
 .align 2
-file_name: .asciiz "D:\highscore.txt"
-.align 2
 error_str: .asciiz "error lectura"
+.align 2
+file_name: .asciiz "D:\highscore.txt"
 
 .text
 
@@ -87,16 +87,26 @@ error_str: .asciiz "error lectura"
 main:
 
 #Mensaje de bienvenida
-li $v0,55
-la $a0,bienvenido_str
-li $a1,1
-syscall
- 
+#li $v0,55
+#la $a0,bienvenido_str
+#li $a1,1
+#syscall
+
+
+jal leer_archivo 
 
 jal refresh_display
-
 jal juego 
 
+
+
+
+
+
+
+#la $a0,highscore_str
+#li $a1,100
+#jal cargar_archivo
 
 li $v0,10
 syscall
