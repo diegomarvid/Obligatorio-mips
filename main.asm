@@ -25,6 +25,10 @@
 .globl decisionstr
 .globl file_name
 .globl error_str
+.globl ganador_str
+
+.heap 
+
 
 
 .data
@@ -68,6 +72,8 @@ bienvenido_str: .asciiz "Bienvenido a Simon \n"
 #Juego
 .align 2
 modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
+.align 2
+ganador_str: .asciiz "Felicitacione, ganaste!!! \n"
 #Highscore
 .align 2
 ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: " 

@@ -3,21 +3,15 @@
 .globl cargar_archivo
 
 
-.data
-
-
-
 .text
 
 ##********CARGAR ARCHIVO************** ##
 
-# $a0 -> direccion string para escribir
-# $a1 -> cantidad caracteres a escribir
 
 cargar_archivo:
 
-#move $t2,$a0
-#move $t3,$a1
+
+# ABRO ARCHIVO
 
 li $v0,13
 la $a0,file_name
@@ -28,17 +22,18 @@ syscall
 move $t0,$v0 #Devuelve el archivo abierto
 
 
-## ESCRIBIR ARCHIVO ##
+## ESCRIBO ARCHIVO ##
 
 li $v0,15
 move $a0,$t0
-la $a1,highscore_str
-li $a2,100 #Cantidad caracteres para leer max
+la $a1,highscore_str #Posee los rankings en formato string para el usuario
+li $a2,100 
 syscall
 
 move $t1,$v0 #Devuelve cantidad caracteres escritos
              # 0 -> Nada, -1 -> error
-             
+
+# Evaluo si no se pudo escribir                          
 bgez $t1,cargar_archivo_fin            
 
 li $v0,4

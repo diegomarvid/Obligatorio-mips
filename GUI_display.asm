@@ -13,6 +13,8 @@
 .globl refresh_coordinates
 .globl refresh_display
 .globl display_light
+.globl imprimir_secuencia
+.globl volver_jugar
 
 #Data
 
@@ -210,7 +212,7 @@ lw $a0,green_cord
 li $a1,green_light
 jal cuadrado
 
-li $a0,500
+li $a0,600
 li $v0,32
 syscall
 
@@ -226,7 +228,7 @@ lw $a0,red_cord
 li $a1,red_light
 jal cuadrado
 
-li $a0,500
+li $a0,600
 li $v0,32
 syscall
 
@@ -243,7 +245,7 @@ lw $a0,blue_cord
 li $a1,blue_light
 jal cuadrado
 
-li $a0,500
+li $a0,600
 li $v0,32
 syscall
 
@@ -260,7 +262,7 @@ lw $a0,yellow_cord
 li $a1,yellow_light
 jal cuadrado
 
-li $a0,500
+li $a0,600
 li $v0,32
 syscall
 
@@ -311,6 +313,71 @@ lw $ra,($sp)
 addiu $sp,$sp,4
 jr $ra
 
+#--------------------------------------------------------------
+
+#en $a0 recibo turno
+#en $a1 recibo secuencia
+
+imprimir_secuencia:
+
+addiu $sp,$sp,-16
+sw $ra,($sp)
+sw $s0,4($sp)
+sw $s2,8($sp)
+sw $s3,12($sp)
+
+la $s0, ($a1)
+move $s2, $a0 #Numero de turno, se usa para saber cuantas veces imprimir
+
+loop:
+
+beqz $s2, imprimir_fin
+
+lb $s3,($s0) #Valor de la secuencia para mostrar
+
+
+
+ #Hace el sonido de la jugada realizada.
+  move $a0,$s3
+  jal sonido_secuencia
+  
+  li $a0,100
+  li $v0,32
+  syscall
+  
+  #Ilumino la jugada realizada.
+  move $a0,$s3
+  jal display_light
+
+
+addiu $s2,$s2,-1
+addiu $s0,$s0,1
+
+j loop
+
+
+imprimir_fin:
+
+lw $ra,($sp)
+lw $s0,4($sp)
+lw $s2,8($sp)
+lw $s3,12($sp)
+addiu $sp,$sp,16
+jr $ra
+
+#---------------------------------------------------------------
+
+volver_jugar:
+
+li $v0,50
+la $a0,decisionstr
+syscall
+
+move $v0,$a0
+
+jr $ra
+
+#---------------------------------------------------------------------
 
 
 

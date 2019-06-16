@@ -7,7 +7,7 @@
 
 .text
 
-#-------------------------------------------------------------
+#*******LOOP JUEGO********#
 juego:
 
 addiu $sp,$sp,-12
@@ -19,6 +19,7 @@ sw $s2,8($sp)
 li $s1,1
 
 modos:
+
 #Mensaje Modos
 li $v0,51
 la $a0,modos_str
@@ -32,22 +33,20 @@ bnez $a1,modos
 bgt $a0,3,modos
 blt $a0,1,modos
 
-
-
 #En s2 esta el modo de juego
 move $s2,$a0
 
-#Si es trickster ya lo hace por defecto
+#Siempre que incio un juego nuevo, actualizo las coordenadas de los colores y la pantalla
+#Excepto en trickster, no importa como comienzan las coordenadas del color.
 beq $a0,3,game_loop
+
 jal refresh_coordinates
 jal refresh_display
-
 
 game_loop:
 
 #VERIFICO SI GANO
 beq $s1,99,juego_gane
-
 
 #ACTUALIZO SECUENCIA
 move $a0,$s1
@@ -58,13 +57,13 @@ move $a0,$s1
 la $a1,secuencia
 jal imprimir_secuencia
 
-
 #INGRESO Y VERIFICO SECUENCIA
 move $a0,$s1
 move $a1,$s2
 jal usuario_juega
 
 #DECIDO SI SEGUIR JUGANDO
+#Si pierdo $v0 es cero y salgo del loop.
 beqz $v0,decision_juego
 
 #ACTUALIZO TURNO
@@ -72,41 +71,43 @@ addiu $s1,$s1,1
 
 j game_loop
 
-
-
+#SI PERDI LA PARTIDA.
 decision_juego:
-
+#Turno menos 1 es el puntaje.
 move $a0,$s1
 addiu $a0,$a0,-1 
-#Agregar highscore
+
+#Agregar highscore, pide nombre y evalua si esta en el top 10.
 jal actualizar_highscore
 
+#Pregunta si se desea jugar nuevamente.
 jal volver_jugar
-
 beqz $v0,juego #0 -> seguir jugando, 1 -> terminar
 
 j juego_fin
 
+#SI GANE LA PARTIDA.
 juego_gane:
 
+#Mensaje Gane
+li $v0,59
+la $a0,ganador_str
+syscall
 #Imprimir mensaje
 
 juego_fin:
-
-
-
 lw $ra,($sp)
 lw $s1,4($sp)
 lw $s2,8($sp)
 addiu $sp,$sp,12
 jr $ra
 
-#-------------------------------------------------------------
+#******************************EXTENDER SECUENCIA*******************************#
 
-#Le llega largo de la secuencia random en $a0
+#En $a0 recibe el turno para agregar un valor al final de la secuencia.
 extender_secuencia:
 
-move $t1,$a0 #Numero de turno en t1
+move $t1,$a0
 la $t0, secuencia
 
 #Genero RANDOM en $a0
@@ -114,29 +115,27 @@ li $a1,4
 li $v0,42
 syscall
 
+#El ultimo lugar del array es: direccion_array+turno-1.
 
-#Actualizo posicion de memoria para guardar
+#Direccion de array + turno
 addu $t0,$t0,$t1
-
-#Resto uno a $t0 porque el turno empieza en 1 pero se guarda desde la posicion 0
+#direccion_array+turno-1
 sb $a0,-1($t0)
 
 jr $ra
 
-#---------------------------------------------------------------------
-
+#*****************SWITCH MODOS AL JUGAR*****************#
+#En $a0 recibe el turno.
+#En $a1 recibe el modo.
 usuario_juega:
 
 addiu $sp,$sp,-4
 sw $ra,($sp)
 
-#a1 es el modo
-
+#Switch para evaluar la jugada del usuario.
 beq $a1,1,juega_normal
 beq $a1,2,juega_rewind
 beq $a1,3,juega_trickster
-
-#$a0 es el turno
 
 juega_normal:
 
@@ -163,8 +162,11 @@ addiu $sp,$sp,4
 
 jr $ra
 
-#--------------------------------------------------------------------
 
+
+#*********CONTROL DE JUGADA EN MODO NORMAL**********#
+#En $a0 recibe el turno actual.
+#Devuelve en $v0=1 si realiza la secuencia de forma correcta y $v0=0 de lo contrario.
 modo_normal:
 
  addiu $sp,$sp,-20
@@ -174,36 +176,45 @@ modo_normal:
  sw $s2,12($sp)
  sw $s3,16($sp)
  
-
- li $s0,0     #Sub turnos del jugador -> numero de jugada
- move $s1,$a0 #Turno en el que estoy
+#Subturnos del jugador-> numero de jugada.
+ li $s0,0
+ #Turno actual en el que esta el jugador.
+ move $s1,$a0 
+ #Inicio del array donde esta la secuencia a seguir.
  la $s2,secuencia
 
 
  normal_loop:
 
+  #Si ya realice toda la secuencia de forma correcta termine.
   beq $s0,$s1,modo_normal_fin
 
-  #Juega turno
+  #Obtiene la jugada del usuario.
   jal get_play
-  
   move $s3,$v0 #En v0 queda el valor de la jugada
   
- 
+  #Si el usuario no jugo (pierde por tiempo), se deja de pedir jugadas.
   beq $s3,-1,normal_error
   
+  #Hace el sonido de la jugada realizada.
+  move $a0,$s3
+  jal sonido_secuencia
+  
+  li $a0,100
+  li $v0,32
+  syscall
+  
+  #Ilumino la jugada realizada.
   move $a0,$s3
   jal display_light
   
-  lb $t4,($s2) #Valor de la secuencia real
-
-  #Me fijo si la jugada es buena 
+  #Evaluo si la juaga realizada es la correcta.
+  lb $t4,($s2) #Valor de la secuencia real.
   beq $s3,$t4,seguir_normal 
 
-   #-----ERROR-XXXX-----------#
-
+   #------------ERROR------------#
    normal_error:   
-   #Sonido erroneo
+   #Sonido de jugada erronea.
    li $v0,33
    li $a0,58
    li $a1,500
@@ -211,20 +222,21 @@ modo_normal:
    li $a3,100
    syscall
    
+   #Carga en $v0 el valor de errarle.
    li $v0,0
    j modo_normal_fin
  
   
-   #------BIEN---------------#
+   #-----------BIEN---------------#
  seguir_normal:
- 
-  #Sonido
-  move $a0,$s3
-  jal sonido_secuencia
 
+ #Aumenta el subturno.
   addiu $s0,$s0,1
+ #Aumenta el puntero de la secuencia.
   addiu $s2,$s2,1
-  li $v0,1 #v0 = 1, le emboque
+ #Cargamos v0 = 1 pues el usuario le emboco.
+  li $v0,1
+  
   j normal_loop
 
  modo_normal_fin:
@@ -238,7 +250,13 @@ modo_normal:
 
   jr $ra
 
-#---------------------------------------------------------------------
+
+
+
+
+#***********CONTROL DE JUGADA EN MODO REWIND************#
+#En $a0 recibe el turno actual.
+#Devuelve en $v0=1 si realiza la secuencia de forma correcta y $v0=0 de lo contrario.
 
 modo_rewind:
 
@@ -249,37 +267,48 @@ modo_rewind:
  sw $s2,12($sp)
  sw $s3,16($sp)
 
- li $s0,0     #Sub turnos del jugador - cada jugada
- move $s1,$a0 #Turno en el que estoy
+ #Subturnos del jugador-> numero de jugada.
+ li $s0,0
+ #Turno actual en el que esta el jugador.
+ move $s1,$a0 
  
- #Arranco desde el final
+ #Arranco a leer la secuencia desde el final.
  addiu $t3,$s1,-1
  la $s2,secuencia($t3)
   
 
  rewind_loop:
-
+ 
+  #Si ya realice toda la secuencia de forma correcta termine.
   beq $s0,$s1,modo_rewind_fin
 
-  #Juega turno
-  
+  #Obtiene la jugada del usuario.
   jal get_play
-
   move $s3,$v0 #En v0 queda el valor de la jugada
   
+  #Si el usuario no jugo (pierde por tiempo), se deja de pedir jugadas.
   beq $s3,-1,rewind_error
   
+  #Hace el sonido de la jugada realizada.
+  move $a0,$s3
+  jal sonido_secuencia
+  
+  li $a0,100
+  li $v0,32
+  syscall
+  
+  #Ilumino la jugada realizada.
+  move $a0,$s3
   jal display_light
   
+  #Evaluo si la juaga realizada es la correcta.
   lb $t4,($s2) #Valor de la secuencia real
-
-  #Me fijo si la jugada es buena 
   beq $s3,$t4,seguir_rewind 
   
-   #-----ERROR-XXXX-----------#
+   #-----------ERROR------------#
 
    rewind_error:
-   #Sonido erroneo
+   #Sonido de jugada erronea.
    li $v0,33
    li $a0,58
    li $a1,500
@@ -287,21 +316,21 @@ modo_rewind:
    li $a3,100
    syscall
 
-   #Si no le emboco termino
+   #Carga en $v0 el valor de errarle.
    li $v0,0
    j modo_rewind_fin
    
-   #------BIEN---------------#
+   #-----------BIEN---------------#
 
  seguir_rewind:
- 
-  #Sonido
-  move $a0,$s3
-  jal sonido_secuencia
 
+  #Aumenta el subturno.
   addiu $s0,$s0,1
+  #Disminuyo el puntero de la secuencia.
   addiu $s2,$s2,-1
-  li $v0,1 #v0 = 1, le emboque
+  #Cargamos v0 = 1 pues el usuario le emboco.
+  li $v0,1
+  
   j rewind_loop
 
  modo_rewind_fin:
@@ -315,8 +344,9 @@ modo_rewind:
 
  jr $ra
 
-#----------------------------------------------------------------
-
+#***********CONTROL DE JUGADA EN MODO TRICKSTER************#
+#En $a0 recibe el turno actual.
+#Devuelve en $v0=1 si realiza la secuencia de forma correcta y $v0=0 de lo contrario.
 modo_trickster:
 
  addiu $sp,$sp,-20
@@ -326,12 +356,14 @@ modo_trickster:
  sw $s2,12($sp)
  sw $s3,16($sp)
  
-
- li $s0,0     #Sub turnos del jugador -> numero de jugada
- move $s1,$a0 #Turno en el que estoy
+ #Subturnos del jugador-> numero de jugada.
+ li $s0,0
+ #Turno actual en el que esta el jugador.
+ move $s1,$a0 
+ #Inicio del array donde esta la secuencia a seguir.
  la $s2,secuencia
  
-  #Re organizo colores
+ #Re organizo colores, despues de mostrar la secuencia.
  li $a0,3
  jal refresh_coordinates
  jal refresh_display
@@ -339,30 +371,36 @@ modo_trickster:
 
  
  trickster_loop:
-
+  #Si ya realice toda la secuencia de forma correcta termine.
   beq $s0,$s1,modo_trickster_fin
 
-  #Juega turno
-  
+  #Obtiene la jugada del usuario.
   jal get_play
+  move $s3,$v0 #En v0 queda el valor de la jugada.
   
-
-  move $s3,$v0 #En v0 queda el valor de la jugada
-  
+  #Si el usuario no jugo (pierde por tiempo), se deja de pedir jugadas.
   beq $s3,-1,trickster_error
   
+ #Hace el sonido de la jugada realizada.
+  move $a0,$s3
+  jal sonido_secuencia
+  
+  li $a0,100
+  li $v0,32
+  syscall
+  
+  #Ilumino la jugada realizada.
   move $a0,$s3
   jal display_light
   
-  lb $t4,($s2) #Valor de la secuencia real
-
-  #Me fijo si la jugada es buena 
+  #Evaluo si la juaga realizada es la correcta.
+  lb $t4,($s2) #Valor de la secuencia real.
   beq $s3,$t4,seguir_trickster 
   
-   #-----ERROR-XXXX-----------#
+   #--------ERROR-----------#
 
    trickster_error:
-   #Sonido erroneo
+   #Sonido de jugada erronea.
    li $v0,33
    li $a0,58
    li $a1,500
@@ -370,21 +408,20 @@ modo_trickster:
    li $a3,100
    syscall
 
-   #Si no le emboco termino
+   #Carga en $v0 el valor de errarle.
    li $v0,0
    j modo_trickster_fin
    
-   #------BIEN---------------#
+   #-------------BIEN---------------#
 
  seguir_trickster:
  
-  #Sonido
-  move $a0,$s3
-  jal sonido_secuencia
-
+  #Aumenta el subturno.
   addiu $s0,$s0,1
+  #Aumento el puntero de la secuencia.
   addiu $s2,$s2,1
-  li $v0,1 #v0 = 1, le emboque
+  #Cargamos v0 = 1 pues el usuario le emboco.
+  li $v0,1
   j trickster_loop
 
  modo_trickster_fin:

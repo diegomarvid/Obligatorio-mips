@@ -39,7 +39,7 @@ move $t4,$a0
 #Calculo diferencia de tiempo
 subu $t4,$t4,$t3
 
-#Evaluo si estoy en menos tiempo del maximo
+#Evaluo si estoy en menos tiempo del maximo (2s)
 bgt $t4,2000,get_play_fin
 
 #Prendo fila 1
@@ -84,6 +84,9 @@ beq $t0, 0x88, cuadrante_3
 
 
 j get_play_loop
+
+#Evaluo que color es que cuadrante
+#Y lo guardo en s0
 
 cuadrante_1:
 
