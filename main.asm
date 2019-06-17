@@ -27,7 +27,7 @@
 .globl error_str
 .globl ganador_str
 
-.heap 
+
 
 
 

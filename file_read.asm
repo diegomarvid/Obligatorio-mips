@@ -5,6 +5,20 @@
 
 leer_archivo:
 
+#Consigo file descriptor
+
+#li $v0,13
+#la $a0,file_name
+#li $a1,1 # 0 -> leer
+#li $a2,0 # 0 -> ignorar modo
+#syscall
+
+#move $v0,$t7
+
+#li $v0,16
+#move $a0,$t7
+#syscall
+
 ## CARGAR ARCHIVO ##
 
 li $v0,13
@@ -27,9 +41,6 @@ syscall
 
 move $t1,$v0 #Devuelve cantidad caracteres leidos
              # 0 -> Nada, -1 -> error
-
-
-
 
 ## MANEJO DE ARCHIVO ##
 
@@ -67,20 +78,26 @@ leer_archivo_puntaje:
 #Muevo puntero hacia el puntaje
 addiu $t0,$t0,1
 
-
+#Paso a int:
+#Digito grande
 lb $t5,($t0)
 
-#Paso a int:
-
-#Digito grande
+#Si es vacio, es por que el archivo es nuevo y no posee puntajes.
+beqz $t5,vacio_decenas
 addiu $t5,$t5,-48
+vacio_decenas:
+
 li $t3,10
 multu $t5,$t3
 mflo $t3
 #Digito chico
 addiu $t0,$t0,1
 lb $t5,($t0)
+
+#Si es vacio, es por que el archivo es nuevo y no posee puntajes.
+beqz $t5,vacio_unidades
 addiu $t5,$t5,-48
+vacio_unidades:
 
 #Sumo digitos
 addu $t3,$t3,$t5
@@ -113,7 +130,7 @@ leer_archivo_error:
 li $v1,0
 
 li $v0,16
-li $a0,3
+move $a0,$t7
 syscall
 
 leer_archivo_fin:
