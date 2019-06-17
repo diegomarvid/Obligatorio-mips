@@ -6,7 +6,16 @@
     
     main:
     
+    # SETUP
     
+    # SALIDAS
+    
+    # RD0,RD1,RD2,RD3
+    
+    # PINES:
+    
+    # 3,5,6,9
+   
     
     # Configurar puerto G como entrada #RG7 -> 12
     li $t0, 128
