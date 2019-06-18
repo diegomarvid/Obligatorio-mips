@@ -15,42 +15,49 @@
     # PINES:
     
     # 3,5,6,9
+    
+    # ENTRADAS
+    
+    # RE0,RE1,RE2,RE3
+    
+    # 26 ,27,28,29
    
     
-    # Configurar puerto G como entrada #RG7 -> 12
-    li $t0, 128
-    sw $t0, TRISG
+    # CONFIGURACION SALIDA
     
-    # Configurar puerto F como salida 4 RF1
-    li $t0, 0 
-    sw $t0, TRISF
     
-    # Configurar puerto E como salida para gnd
+    # Configurar puerto D como salida
     li $t0, 0 
+    sw $t0, TRISD
+    
+    
+    # CONFIGURACION ENTRADA
+    
+    # Configurar puerto E como entrada
+    li $t0, 15
     sw $t0, TRISE
     
-    sw $t0,PORTE
+    # 15 -> 00001111 
     
-    
+
     loop:
     
-    # Obtengo valor del boton
-    lw $t0,PORTG
+    # Obtengo valores de los botones
     
-    andi $t0,$t0,128
+    
+    lw $t4,PORTE
+    
+    # Guardo el valor de cada boton
+    andi $t0,$t4,1
+    andi $t1,$t4,2
+    andi $t2,$t4,4
+    andi $t3,$t4,8
     
     # Debouncing
     
     
-    
-    
-    
-    
-    # Cargo el led con el valor del boton
-    
-    # Paso a posicion de la 6 a la 1 para escribir en RF1 | 4
-    srl $t0,$t0,6
-    sw $t0,PORTF
+    # Cargo el led con el valor del boton 
+    sw $t4,PORTD
     
     j loop
     

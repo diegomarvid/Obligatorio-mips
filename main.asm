@@ -105,11 +105,6 @@ jal refresh_display
 jal juego 
 
 
-
-
-
-
-
 #la $a0,highscore_str
 #li $a1,100
 #jal cargar_archivo
