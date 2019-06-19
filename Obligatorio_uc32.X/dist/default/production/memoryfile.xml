@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/debug/Obligatorio_uc32.X.debug.elf">                 
+  <executable name="dist/default/production/Obligatorio_uc32.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>531968</length>                 
-      <used>2020</used>                     
-      <free>529948</free>                     
+      <used>1988</used>                     
+      <free>529980</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
-      <length>33280</length>                 
-      <used>1123</used>                     
-      <free>32157</free>                     
+      <length>32768</length>                 
+      <used>99</used>                     
+      <free>32669</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

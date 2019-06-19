@@ -23,6 +23,8 @@
     # 26 ,27,28,29
    
     
+    setup:
+    
     # CONFIGURACION SALIDA
     
     
@@ -39,27 +41,54 @@
     
     # 15 -> 00001111 
     
-
-    loop:
+    # TIMERS
+    T1CON = 1 
+    TMR1 = 0
+   
     
-    # Obtengo valores de los botones
+    init:
+    
+    # Dejo leds prendidos como MENU
+    li $t0,15
+    sw $t0,PORTD
+    
+    esperar:
+    
+    lw $t0,PORTE
+    
+    beq $t0,1,normal
+    beq $t0,2,normal
+    beq $t0,4,rewind
+    beq $t0,8,rewind
     
     
-    lw $t4,PORTE
+    j esperar
     
-    # Guardo el valor de cada boton
-    andi $t0,$t4,1
-    andi $t1,$t4,2
-    andi $t2,$t4,4
-    andi $t3,$t4,8
+    # Evaluo modos
     
-    # Debouncing
+    normal:
+    
+    li $a0,1
+    
+    j jugar
+    
+    rewind:
+    
+    li $a0,2
+    
+    j jugar
+    
+    jugar:
+       
+    jal juego
     
     
-    # Cargo el led con el valor del boton 
-    sw $t4,PORTD
+    # Termino de jugar, vuelvo a modo de espera
+    beq $v0,0,init
     
-    j loop
+    
+    
+    fin:
     
 .end main
 
