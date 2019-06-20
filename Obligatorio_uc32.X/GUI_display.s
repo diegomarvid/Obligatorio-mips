@@ -121,7 +121,7 @@ sw $t0,PORTD
 li $t0,0
     
 display_light_loop:    
-beq $t0,45000,display_light_fin   
+beq $t0,15000,display_light_fin   
 addiu $t0,$t0,1
 j display_light_loop    
      
@@ -131,12 +131,7 @@ display_light_fin:
 # Apagar
 li $t0,0    
 sw $t0,PORTD
-    
-    
-loop1:    
-beq $t0,45000,fin   
-addiu $t0,$t0,1
-j loop1      
+         
 fin:   
     
 jr $ra    
