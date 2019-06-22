@@ -1,7 +1,8 @@
 .globl extender_secuencia
 .globl display_light
 .globl imprimir_secuencia    
-.globl secuencia    
+.globl secuencia
+.globl test_random
     
 .data
     
@@ -134,4 +135,103 @@ sw $t0,PORTD
          
 fin:   
     
+jr $ra
+    
+    
+    
+# *********** RANDOM ************ #
+    
+random:
+    
+ lh $v0, TMR2   
+ li $t0,4   
+ 
+ rem $v0,$v0,$t0
+     
+    
+random_fin:
+    
+jr $ra
+    
+    
+    
+# *************************************************#
+    
+    
+test_random:
+
+addiu $sp,$sp,-8
+sw $ra,($sp)    
+    
+   
+jal random
+    
+beq $v0,0,test_green
+beq $v0,1,test_red
+beq $v0,2,test_blue
+beq $v0,3,test_yellow        
+
+j test_random_fin    
+    
+test_green:    
+    
+li $t0,1
+        
+    
+j test_random_fin
+    
+test_red:    
+    
+li $t0,2    
+    
+j test_random_fin
+    
+test_blue:    
+    
+    
+li $t0,4    
+    
+j test_random_fin
+    
+test_yellow:    
+    
+li $t0,8    
+    
+j test_random_fin   
+    
+    
+test_random_fin:
+    
+sw $t0,PORTD
+    
+li $t0,0    
+test_loop:
+    
+beq $t0,45000,test_random_ra    
+    
+addiu $t0,$t0,1    
+    
+j test_loop
+    
+test_random_ra:    
+    
+li $t0,0    
+sw $t0,PORTD
+    
+li $t0,0    
+test_loop_2:
+    
+beq $t0,45000,test_random_ra_2    
+    
+addiu $t0,$t0,1    
+    
+j test_loop_2    
+ 
+    
+test_random_ra_2:    
+    
+lw $ra,($sp)    
+addiu $sp,$sp,8    
 jr $ra    
+    
+    

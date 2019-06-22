@@ -1,12 +1,28 @@
-.text
+
+    .globl get_play
+    
+    .text
+    
+    
+    
+    
+    
+    
+    # ******** OBTENER VALORES DE LOS BOTONES ********* #
+    
+    
+    # $v0 -> valor del color presionado, -1 no se presiono
+    
     get_play:
     
     
     TMR1 = 0
+    lh $t0, TMR1
+    
     
     loop_get_play:
     
-    beq TMR1,10000,error_get_play
+    beq $t0,10000,error_get_play
     
     # Cargo los botones
     lw $t4,PORTE

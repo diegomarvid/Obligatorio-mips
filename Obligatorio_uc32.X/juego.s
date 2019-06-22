@@ -1,4 +1,4 @@
-globl juego
+.globl juego
 
 .data
 
@@ -21,8 +21,6 @@ li $s1,1
 
 game_loop:
 
-#   VERIFICO SI GANO
-beq $s1,99,juego_gane
 
 #   ACTUALIZO SECUENCIA
 move $a0,$s1
@@ -69,7 +67,7 @@ move $t1,$a0
 la $t0, secuencia
 
 #   Genero RANDOM en $v0
-jal random
+# jal random
 
 #   El ultimo lugar del array es: direccion_array+turno-1.
 
