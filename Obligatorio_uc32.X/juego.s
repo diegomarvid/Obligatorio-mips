@@ -18,9 +18,14 @@ sw $s2,8($sp)
 
 #  Guardo turno en s1
 li $s1,1
-
+#  Guardo modo en s2    
+move $s2,$a0
+    
 game_loop:
 
+#   VERIFICO GANADOR
+    
+beq $s1,99,juego_gane    
 
 #   ACTUALIZO SECUENCIA
 move $a0,$s1
@@ -28,7 +33,6 @@ jal extender_secuencia
 
 #   IMPRIMO SECUENCIA
 move $a0,$s1
-la $a1,secuencia
 jal imprimir_secuencia
 
 #   INGRESO Y VERIFICO SECUENCIA
@@ -48,7 +52,18 @@ addiu $s1,$s1,1
 j game_loop
     
 juego_perder:
-li $v0,0    
+    
+jal animacion_perder     
+    
+li $v0,0 
+    
+j juego_fin
+    
+juego_gane:
+    
+jal animacion_ganar
+    
+li $v0,1    
 
 
 juego_fin:
@@ -63,21 +78,28 @@ jr $ra
 #   En $a0 recibe el turno para agregar un valor al final de la secuencia.
 extender_secuencia:
 
+addiu $sp,$sp,-4
+sw $ra,($sp)    
+    
 move $t1,$a0
 la $t0, secuencia
 
 #   Genero RANDOM en $v0
-# jal random
+jal random
 
 #   El ultimo lugar del array es: direccion_array+turno-1.
 
 #   Direccion de array + turno
 addu $t0,$t0,$t1
 #   direccion_array+turno-1
-sb $a0,-1($t0)
-
+sb $v0,-1($t0)
+    
+lw $ra,($sp)    
+addiu $sp,$sp,4
+    
 jr $ra
 
+    
 #   *****************SWITCH MODOS AL JUGAR*****************#  
 #   En $a0 recibe el turno.
 #   En $a1 recibe el modo.
@@ -114,8 +136,9 @@ jr $ra
 
 
 #   *********CONTROL DE JUGADA EN MODO NORMAL**********#  
+    
 #   En $a0 recibe el turno actual.
-#   Devuelve en $v0=1 si realiza la secuencia de forma correcta y $v0=0 de lo contrario.
+#   Devuelve en $v0 = 1 si realiza la secuencia de forma correcta y $v0 = 0 de lo contrario.
 modo_normal:
 
  addiu $sp,$sp,-20
@@ -125,7 +148,7 @@ modo_normal:
  sw $s2,12($sp)
  sw $s3,16($sp)
  
-#   Subturnos del jugador-> numero de jugada.
+#   Subturnos del jugador -> numero de jugada.
  li $s0,0
  #   Turno actual en el que esta el jugador.
  move $s1,$a0 
@@ -155,9 +178,10 @@ modo_normal:
 
    #  ------------ERROR------------#  
    normal_error:   
-   
+    
    #  Carga en $v0 el valor de errarle.
    li $v0,0
+   
    j modo_normal_fin
  
   
@@ -232,7 +256,7 @@ modo_rewind:
    # -----------ERROR------------# 
 
    rewind_error:
-
+    
    # Carga en $v0 el valor de errarle.
    li $v0,0
    j modo_rewind_fin

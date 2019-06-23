@@ -16,16 +16,22 @@
     get_play:
     
     
-    TMR1 = 0
-    lh $t0, TMR1
+    # Reinicio timer
+    sw $0,TMR2
+    
     
     
     loop_get_play:
     
-    beq $t0,10000,error_get_play
+    # Tiempo actual
+    lw $t0, TMR2
+    
+    
+    beq $t0,45000,error_get_play
     
     # Cargo los botones
     lw $t4,PORTE
+    andi $t4,$t4,0b1111
     
     beq $t4,1,jugada_verde
     beq $t4,2,jugada_rojo

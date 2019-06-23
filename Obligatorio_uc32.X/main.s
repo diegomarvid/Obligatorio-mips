@@ -36,83 +36,65 @@
     # CONFIGURACION ENTRADA
     
     # Configurar puerto E como entrada
-    li $t0, 15
+    li $t0, 0xF
     sw $t0, TRISE
     
     # 15 -> 00001111 
     
     # TIMERS
-    # T2CON = 
+    
     
     li $t0,0b00000101
-    sw $t0,T2CON
+    sw $t0,T2CON # Modo
     
     li $t0,0x8000
-    sw $t0,T2CONSET
+    sw $t0,T2CONSET # Start timer!
 
-
+  
    
-     init:
+    init:
+      
+    # Dejo leds prendidos como MENU
+    li $t0,0xF
+    sw $t0,PORTD
      
-     # Dejo leds prendidos como MENU
-     # li $t0,15
-     li $t0,0
-     sw $t0,PORTD
      
+    esperar:
+     
+    lw $t0,PORTE
+    andi $t0,$t0,0b1111
+     
+    beq $t0,1,normal
+    beq $t0,2,rewind
+    beq $t0,4,fin
+    beq $t0,8,fin     
+     
+    j esperar
+          
+    # Evaluo modos
+     
+    normal:
+     
+    li $a0,1
+     
+    j jugar
     
+    rewind:
      
-     evaluar:
-     lw $t0,PORTE
-     beq $t0,1,prender
+    li $a0,2
      
-     j evaluar
-     
-     prender:
-     
-     jal test_random
-     
-     j evaluar
+    j jugar
     
-     
-     
-     
-#      
-#      esperar:
-#      
-#      lw $t0,PORTE
-#      
-#      beq $t0,1,normal
-#      beq $t0,2,normal
-#      beq $t0,4,rewind
-#      beq $t0,8,rewind     
-#      
-#      j esperar
-#           
-#      # Evaluo modos
-#      
-#      normal:
-#      
-#      li $a0,1
-#      
-#      j jugar
-#      
-#      rewind:
-#      
-#      li $a0,2
-#      
-#      j jugar
-#     
-#      jugar:
-#        
-#      # jal juego
-#     
-#     
-#     # Termino de jugar, vuelvo a modo de espera
-#      beq $v0,0,init
+    jugar:
+       
+    jal juego
     
+    j init
     
     
     fin:
+    
+    sw $0,PORTD
     
 .end main
 

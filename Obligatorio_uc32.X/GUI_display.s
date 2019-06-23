@@ -2,7 +2,9 @@
 .globl display_light
 .globl imprimir_secuencia    
 .globl secuencia
-.globl test_random
+.globl random   
+.globl animacion_perder
+.globl animacion_ganar    
     
 .data
     
@@ -11,28 +13,9 @@ secuencia: .space 99
     
 .text
   
-# ******************************EXTENDER SECUENCIA*******************************#
-
-# En $a0 recibe el turno para agregar un valor al final de la secuencia.
-extender_secuencia:
-
-move $t1,$a0
-    
-la $t0, secuencia
-
-# Genero RANDOM en $a0
-li $a0,1
-
-# El ultimo lugar del array es: direccion_array+turno-1.
-
-# Direccion de array + turno
-addu $t0,$t0,$t1
-# direccion_array+turno-1
-sb $a0,-1($t0)
-
-jr $ra
-    
 # *****************************IMPRIMIR SECUENCIA********************************#
+    
+# $a0 -> Numero de turno    
     
 imprimir_secuencia:
 
@@ -43,15 +26,15 @@ sw $s2,8($sp)
 sw $s3,12($sp)
 
 la $s0, secuencia
-move $s2, $a0 #Numero de turno, se usa para saber cuantas veces imprimir
+move $s2, $a0 # Numero de turno, se usa para saber cuantas veces imprimir
 
 loop:
 
 beqz $s2, imprimir_fin
 
-lb $s3,($s0) #Valor de la secuencia para mostrar
+lb $s3,($s0) # Valor de la secuencia para mostrar
 
-  #Ilumino la jugada realizada.
+  # Ilumino la jugada realizada.
   move $a0,$s3
   jal display_light
   
@@ -78,6 +61,9 @@ jr $ra
 # $a0 -> Jugada realizada   
     
 display_light:
+    
+addiu $sp,$sp,-4
+sw $ra,($sp)    
     
 li $t0,0 # TODO APAGADOS
     
@@ -111,127 +97,160 @@ li $t0,8 # RD3
 j display_light_on      
     
     
-    
-    
+   
 display_light_on:  
     
 # Prendo LED    
 sw $t0,PORTD
     
-# Sleep
-li $t0,0
-    
-display_light_loop:    
-beq $t0,15000,display_light_fin   
-addiu $t0,$t0,1
-j display_light_loop    
+li $a0,45000
+jal sleep    
      
-    
-display_light_fin:   
     
 # Apagar
 li $t0,0    
 sw $t0,PORTD
+    
+li $a0,45000
+jal sleep      
          
-fin:   
+lw $ra,($sp)
+addiu $sp,$sp,4    
     
 jr $ra
     
+# ******************RANDOM********************* #
     
-    
-# *********** RANDOM ************ #
     
 random:
     
- lh $v0, TMR2   
- li $t0,4   
+ lw $v0, TMR2
  
- rem $v0,$v0,$t0
-     
+ bgt $v0,0xFF00,random_reset
+  
+ andi $v0,$v0,0b11
+ 
+ random_reset:
+ sw $t0, TMR2
+ 
+ andi $v0,$v0,0b11
     
-random_fin:
+jr $ra    
     
-jr $ra
+# *********************SLEEP****************** # 
+    
+# $a0 -> tiempo sleep    
+    
+sleep:
+    
+li $t0,0  
+    
+sleep_loop:
+    
+beq $t0,$a0,sleep_fin
+    
+addiu $t0,$t0,1    
+    
+j sleep_loop     
+
+    
+sleep_fin:    
+    
+jr $ra 
     
     
-    
-# *************************************************#
-    
-    
-test_random:
+animacion_perder:
 
 addiu $sp,$sp,-8
-sw $ra,($sp)    
-    
-   
-jal random
-    
-beq $v0,0,test_green
-beq $v0,1,test_red
-beq $v0,2,test_blue
-beq $v0,3,test_yellow        
+sw $ra,($sp)
+sw $s1,4($sp)   
 
-j test_random_fin    
+# Defino tiempo de clock
+li $a0,20000    
     
-test_green:    
+li $t0,0b0001
+sw $t0,PORTD
+   
+jal sleep
     
-li $t0,1
-        
+li $t0,0b0011
+sw $t0,PORTD
+   
+jal sleep
     
-j test_random_fin
+li $t0,0b0111
+sw $t0,PORTD
+   
+jal sleep
     
-test_red:    
+li $t0,0b1111
+sw $t0,PORTD
+   
+jal sleep
     
-li $t0,2    
+li $t0,0b1110
+sw $t0,PORTD
+   
+jal sleep
     
-j test_random_fin
+li $t0,0b1100
+sw $t0,PORTD
+   
+jal sleep
     
-test_blue:    
-    
-    
-li $t0,4    
-    
-j test_random_fin
-    
-test_yellow:    
-    
-li $t0,8    
-    
-j test_random_fin   
-    
-    
-test_random_fin:
-    
+li $t0,0b1000
 sw $t0,PORTD
     
-li $t0,0    
-test_loop:
+jal sleep
     
-beq $t0,45000,test_random_ra    
-    
-addiu $t0,$t0,1    
-    
-j test_loop
-    
-test_random_ra:    
-    
-li $t0,0    
+li $t0,0b0000
 sw $t0,PORTD
     
-li $t0,0    
-test_loop_2:
+jal sleep     
     
-beq $t0,45000,test_random_ra_2    
+animacion_perder_fin:    
     
-addiu $t0,$t0,1    
+lw $ra,($sp)
+lw $s1,4($sp)    
+addiu $sp,$sp,8       
     
-j test_loop_2    
- 
+ jr $ra   
     
-test_random_ra_2:    
+animacion_ganar:
     
-lw $ra,($sp)    
+addiu $sp,$sp,-8
+sw $ra,($sp)
+sw $s1,4($sp)    
+    
+li $s1,0
+
+animacion_ganar_loop:     
+    
+beq $s1,3,animacion_ganar_fin
+     
+li $t0,0xF
+sw $t0,PORTD
+
+li $a0,30000    
+jal sleep
+    
+sw $0,PORTD
+    
+li $a0,30000    
+jal sleep    
+    
+addiu $s1,$s1,1
+    
+j animacion_ganar_loop    
+    
+animacion_ganar_fin:    
+    
+lw $ra,($sp)
+lw $s1,4($sp)    
 addiu $sp,$sp,8    
+    
 jr $ra    
+    
+    
     
     
