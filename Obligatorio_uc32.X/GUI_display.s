@@ -165,8 +165,12 @@ addiu $sp,$sp,-8
 sw $ra,($sp)
 sw $s1,4($sp)   
 
+    
+    
 # Defino tiempo de clock
-li $a0,20000    
+li $a0,17000    
+    
+# Animacion    
     
 li $t0,0b0001
 sw $t0,PORTD
@@ -206,7 +210,52 @@ jal sleep
 li $t0,0b0000
 sw $t0,PORTD
     
+jal sleep
+    
+# Pego la vuelta
+    
+li $t0,0b1000
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b1100
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b1110
+sw $t0,PORTD
+    
+jal sleep
+
+li $t0,0b1111
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b0111
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b0011
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b0001
+sw $t0,PORTD
+    
+jal sleep
+    
+li $t0,0b0000
+sw $t0,PORTD
+    
 jal sleep     
+    
+    
+       
     
 animacion_perder_fin:    
     
