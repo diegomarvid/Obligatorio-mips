@@ -62,7 +62,7 @@ blue_cord: .word 2
 yellow_cord: .word 3
 
 #Highscore
-jugador_actual: .word
+jugador_actual: .word 0
 
 #Strings:
 
@@ -93,10 +93,10 @@ file_name: .asciiz "D:\highscore.txt"
 main:
 
 #Mensaje de bienvenida
-li $v0,55
-la $a0,bienvenido_str
-li $a1,1
-syscall
+#li $v0,55
+#la $a0,bienvenido_str
+#li $a1,1
+#syscall
 
 #Persistencia.
 jal leer_archivo 
