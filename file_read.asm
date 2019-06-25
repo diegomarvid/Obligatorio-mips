@@ -5,7 +5,7 @@
 
 leer_archivo:
 
-#Consigo file descriptor
+#Abro en lectura-escritura por seguridad.
 
 li $v0,13
 la $a0,file_name

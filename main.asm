@@ -12,7 +12,7 @@
 .globl ingreso_nombre_str
 .globl file_data
 
-#Words
+#Words:
 .globl green_cord
 .globl red_cord
 .globl yellow_cord
@@ -26,8 +26,7 @@
 .globl file_name
 .globl error_str
 .globl ganador_str
-
-
+.globl higscore_title
 
 
 
@@ -45,7 +44,7 @@ secuencia: .space 200
 .align 2
 jugadores: .space 40
 .align 2
-highscore_str: .space 100
+highscore_str: .space 101
 .align 2
 jugador_nombre: .space 4
 #File_write_read
@@ -74,6 +73,8 @@ bienvenido_str: .asciiz "Bienvenido a Simon \n"
 modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
 .align 2
 ganador_str: .asciiz "Felicitacione, ganaste!!! \n"
+.align 2
+higscore_title: .asciiz "El highscore es:\n"
 #Highscore
 .align 2
 ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: " 
@@ -92,11 +93,11 @@ file_name: .asciiz "D:\highscore.txt"
 
 main:
 
-#Mensaje de bienvenida
-#li $v0,55
-#la $a0,bienvenido_str
-#li $a1,1
-#syscall
+# Mensaje de bienvenida
+li $v0,55
+la $a0,bienvenido_str
+li $a1,1
+syscall
 
 #Persistencia.
 jal leer_archivo 

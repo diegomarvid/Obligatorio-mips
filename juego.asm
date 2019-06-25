@@ -77,16 +77,13 @@ j game_loop
 
 #SI PERDI LA PARTIDA.
 decision_juego:
+
 #Turno menos 1 es el puntaje.
 move $a0,$s1
 addiu $a0,$a0,-1 
 
 #Agregar highscore, pide nombre y evalua si esta en el top 10.
 jal actualizar_highscore
-
-#Pregunta si se desea jugar nuevamente.
-jal volver_jugar
-beqz $v0,juego #0 -> seguir jugando, 1 -> terminar
 
 j juego_fin
 
@@ -97,9 +94,21 @@ juego_gane:
 li $v0,59
 la $a0,ganador_str
 syscall
-#Imprimir mensaje
+
 
 juego_fin:
+
+#Imprimir highscore
+li $v0, 59
+la $a0,higscore_title
+la $a1,highscore_str
+syscall
+
+#Pregunta si se desea jugar nuevamente.
+jal volver_jugar
+beqz $v0,juego #0 -> seguir jugando, 1 -> terminar
+
+
 lw $ra,($sp)
 lw $s1,4($sp)
 lw $s2,8($sp)
