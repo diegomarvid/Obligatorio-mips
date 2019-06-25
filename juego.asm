@@ -15,6 +15,9 @@ sw $ra,($sp)
 sw $s1,4($sp)
 sw $s2,8($sp)
 
+#Inicializo las condiciones del juego.
+jal refresh_display
+
 #Guardo turno en s1
 li $s1,1
 
@@ -26,8 +29,9 @@ la $a0,modos_str
 syscall
 
 #en a1 guardo el status, 0 = OK
-beq $a1,2,juego_fin
-bnez $a1,modos
+
+beq $a1,-2,juego_fin
+blt $a1,0, modos
 
 #Evaluo que el modo este entre 1 y 3
 bgt $a0,3,modos

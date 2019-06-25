@@ -93,21 +93,15 @@ file_name: .asciiz "D:\highscore.txt"
 main:
 
 #Mensaje de bienvenida
-#li $v0,55
-#la $a0,bienvenido_str
-#li $a1,1
-#syscall
+li $v0,55
+la $a0,bienvenido_str
+li $a1,1
+syscall
 
-
+#Persistencia.
 jal leer_archivo 
-
-jal refresh_display
+#Llamo al juego.
 jal juego 
-
-
-#la $a0,highscore_str
-#li $a1,100
-#jal cargar_archivo
 
 li $v0,10
 syscall

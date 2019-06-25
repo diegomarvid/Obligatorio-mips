@@ -7,23 +7,23 @@ leer_archivo:
 
 #Consigo file descriptor
 
-#li $v0,13
-#la $a0,file_name
-#li $a1,1 # 0 -> leer
-#li $a2,0 # 0 -> ignorar modo
-#syscall
+li $v0,13
+la $a0,file_name
+li $a1,9 # 0 -> leer
+li $a2,0 # 0 -> ignorar modo
+syscall
 
-#move $v0,$t7
+move $v0,$t7
 
-#li $v0,16
-#move $a0,$t7
-#syscall
+li $v0,16
+move $a0,$t7
+syscall
 
 ## CARGAR ARCHIVO ##
 
 li $v0,13
 la $a0,file_name
-li $a1,0 # 0 -> leer
+li $a1,1 # 0 -> leer
 li $a2,0 # 0 -> ignorar modo
 syscall
 
