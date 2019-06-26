@@ -83,7 +83,7 @@ ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: "
 decisionstr: .asciiz "Desea volver a jugar? \n"
 #File_write_read
 .align 2
-error_str: .asciiz "error lectura"
+error_str: .asciiz "error"
 .align 2
 file_name: .asciiz "D:\highscore.txt"
 

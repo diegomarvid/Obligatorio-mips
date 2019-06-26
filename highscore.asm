@@ -87,6 +87,7 @@ lw $s4,20($sp)
 addiu $sp,$sp,24
 jr $ra
 
+
 #**********CAMBIAR RANKING**********#
 
 # $a0 -> puntaje
@@ -155,8 +156,6 @@ swap_rank_remplazar:
 
 #Cargo en el ranking 10
 
-
-
 #Cargo la posicion de donde se comienza a pegar.
 la $t0,jugadores
 addiu $t0,$t0,36
@@ -181,6 +180,7 @@ j swap_rank_remplazar_loop
 swap_rank_fin:
 
 jr $ra
+
 
 #***************CREAR JUGADOR**************#
 # $a0 -> puntaje
@@ -253,6 +253,7 @@ ingresar_jugador_sistema_fin:
 #Cargo en la ultima posicion el puntaje del jugador.
 sb $a0,($t3)
 jr $ra
+
 
 #**************CONTROLAR NOMBRE***************#
 

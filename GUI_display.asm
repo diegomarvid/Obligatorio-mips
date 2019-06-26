@@ -188,7 +188,7 @@ cuadrado_fin:
 jr $ra
 
 
-#**************DISPLAY LIGHT**********#
+#**************DISPLAY LIGHT*************#
 
 # $a0 -> Jugada
 
@@ -205,7 +205,7 @@ beq $a0,2,display_light_blue
 
 beq $a0,3,display_light_yellow
 
-
+#Luz verde.
 display_light_green:
 
 lw $a0,green_cord
@@ -222,6 +222,7 @@ jal cuadrado
 
 j display_light_fin
 
+#Luz roja.
 display_light_red:
 
 lw $a0,red_cord
@@ -239,6 +240,7 @@ jal cuadrado
 
 j display_light_fin
 
+#Luz azul.
 display_light_blue:
 
 lw $a0,blue_cord
@@ -256,6 +258,7 @@ jal cuadrado
 
 j display_light_fin
 
+#Luz amarilla.
 display_light_yellow:
 
 lw $a0,yellow_cord
@@ -275,13 +278,12 @@ j display_light_fin
 
 display_light_fin:
 
-#jal display_init
 
 lw $ra,($sp)
 addiu $sp,$sp,8
 jr $ra
 
-#**********Refresh display***********#
+#**********REFRESH DISPLAY***********#
 
 refresh_display:
 
@@ -313,7 +315,7 @@ lw $ra,($sp)
 addiu $sp,$sp,4
 jr $ra
 
-#--------------------------------------------------------------
+#**************IMPRIMIR SECUENCIA ****************#
 
 #en $a0 recibo turno
 #en $a1 recibo secuencia
@@ -365,7 +367,7 @@ lw $s3,12($sp)
 addiu $sp,$sp,16
 jr $ra
 
-#---------------------------------------------------------------
+#*********** VOLVER A JUGAR ************#
 
 volver_jugar:
 
@@ -377,7 +379,7 @@ move $v0,$a0
 
 jr $ra
 
-#---------------------------------------------------------------------
+#****************************************************************#
 
 
 

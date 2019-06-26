@@ -28,7 +28,7 @@ li $v0,51
 la $a0,modos_str
 syscall
 
-#en a1 guardo el status, 0 = OK
+#En a1 guardo el status, 0 = OK
 
 beq $a1,-2,juego_fin
 blt $a1,0, modos

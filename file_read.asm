@@ -9,7 +9,7 @@ leer_archivo:
 
 li $v0,13
 la $a0,file_name
-li $a1,9 # 0 -> leer
+li $a1,9 # 0 -> leer-escribir
 li $a2,0 # 0 -> ignorar modo
 syscall
 
@@ -44,7 +44,7 @@ move $t1,$v0 #Devuelve cantidad caracteres leidos
 
 ## MANEJO DE ARCHIVO ##
 
-la $t0,file_data #Highscore_str
+la $t0,file_data #Highscore_txt
 li $t2,0 #Numero de ranking -1
 la $t4,jugadores
 
@@ -121,21 +121,16 @@ li $v0,16
 move $a0,$t7
 syscall
 
-li $v1,1
-
 j leer_archivo_fin
 
 leer_archivo_error:
 
-li $v1,0
+li $v0,4
+la $a0,error_str
+syscall 
 
-li $v0,16
-move $a0,$t7
-syscall
 
 leer_archivo_fin:
 
-
-move $v0,$v1
 
 jr $ra
