@@ -21,6 +21,10 @@ li $s1,1
 #  Guardo modo en s2    
 move $s2,$a0
     
+# Hago un sleep antes de mostrar secuencia
+li $a0,65000    
+jal sleep    
+    
 game_loop:
 
 #   VERIFICO GANADOR
@@ -78,11 +82,12 @@ jr $ra
 #   En $a0 recibe el turno para agregar un valor al final de la secuencia.
 extender_secuencia:
 
-addiu $sp,$sp,-4
-sw $ra,($sp)    
+addiu $sp,$sp,-8
+sw $ra,($sp)
+sw $s0,4($sp)    
     
 move $t1,$a0
-la $t0, secuencia
+la $s0, secuencia
 
 #   Genero RANDOM en $v0
 jal random
@@ -90,12 +95,13 @@ jal random
 #   El ultimo lugar del array es: direccion_array+turno-1.
 
 #   Direccion de array + turno
-addu $t0,$t0,$t1
+addu $s0,$s0,$t1
 #   direccion_array+turno-1
-sb $v0,-1($t0)
+sb $v0,-1($s0)
     
-lw $ra,($sp)    
-addiu $sp,$sp,4
+lw $ra,($sp) 
+lw $s0,4($sp)    
+addiu $sp,$sp,8
     
 jr $ra
 

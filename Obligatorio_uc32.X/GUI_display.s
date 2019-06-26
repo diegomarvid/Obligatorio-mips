@@ -4,7 +4,8 @@
 .globl secuencia
 .globl random   
 .globl animacion_perder
-.globl animacion_ganar    
+.globl animacion_ganar
+.globl sleep    
     
 .data
     
@@ -124,16 +125,24 @@ jr $ra
     
 random:
     
- lw $v0, TMR2
- 
- bgt $v0,0xFF00,random_reset
+lw $v0, TMR2
   
+bgt $v0,0xFF00,random_reset 
+ 
+ li $t0,7
+ multu $t0,$v0
+ mflo $v0
+ 
  andi $v0,$v0,0b11
  
+ sw $v0,TMR2
+
  random_reset:
- sw $t0, TMR2
+    
+ sw $0,TMR2    
  
  andi $v0,$v0,0b11
+ 
     
 jr $ra    
     

@@ -44,14 +44,10 @@
     # TIMERS
     
     
-    li $t0,0b00000101
+    li $t0,0x8000
     sw $t0,T2CON # Modo
     
-    li $t0,0x8000
-    sw $t0,T2CONSET # Start timer!
-
-  
-   
+ 
     init:
       
     # Dejo leds prendidos como MENU
