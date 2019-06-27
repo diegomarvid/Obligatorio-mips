@@ -92,9 +92,15 @@ juego_gane:
 
 #Mensaje Gane
 li $v0,59
-la $a0,ganador_str
+la $a1,ganador_str
+la $a0,ganador_title_str
 syscall
 
+#Turno menos 1 es el puntaje.
+move $a0,$s1
+addiu $a0,$a0,-1 
+#Agregar highscore, pide nombre y evalua si esta en el top 10.
+jal actualizar_highscore
 
 juego_fin:
 

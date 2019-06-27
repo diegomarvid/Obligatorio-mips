@@ -26,6 +26,7 @@
 .globl file_name
 .globl error_str
 .globl ganador_str
+.globl ganador_title_str
 .globl higscore_title
 
 
@@ -35,20 +36,14 @@
 #Spaces:
 
 #GUI_display
-.align 2
 display: .space 256
 #Juego
-.align 2
 secuencia: .space 200
 #Highscore
-.align 2
 jugadores: .space 40
-.align 2
 highscore_str: .space 101
-.align 2
 jugador_nombre: .space 4
 #File_write_read
-.align 2
 file_data: .space 100
 
 
@@ -66,25 +61,18 @@ jugador_actual: .word 0
 #Strings:
 
 #Main
-.align 2
 bienvenido_str: .asciiz "Bienvenido a Simon \n"
 #Juego
-.align 2
 modos_str: .asciiz "Seleccione su modo de juego: \n1- Normal \n2-Rewind \n3-Trickster \n"
-.align 2
-ganador_str: .asciiz "Felicitacione, ganaste!!! \n"
-.align 2
+ganador_str: .asciiz "Felicitaciones, ganaste!!! \n"
+ganador_title_str: .asciiz " "
 higscore_title: .asciiz "El highscore es:\n"
 #Highscore
-.align 2
 ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: " 
 #Imprimir
-.align 2
 decisionstr: .asciiz "Desea volver a jugar? \n"
-#File_write_read
-.align 2
+#File
 error_str: .asciiz "error"
-.align 2
 file_name: .asciiz "D:\highscore.txt"
 
 .text

@@ -139,9 +139,6 @@ mflo $t5
 
 la $t2,display #Direccion para pintar filas
 
-#Intento arreglar desfasaje de bitmap con el align
-addiu $t2,$t2,0
-
 bgt $a0,1,cuadrado_esquinas_abajo
 
 addu $t2,$t2,$t5
@@ -318,7 +315,6 @@ jr $ra
 #**************IMPRIMIR SECUENCIA ****************#
 
 #en $a0 recibo turno
-#en $a1 recibo secuencia
 
 imprimir_secuencia:
 
@@ -328,7 +324,7 @@ sw $s0,4($sp)
 sw $s2,8($sp)
 sw $s3,12($sp)
 
-la $s0, ($a1)
+la $s0, secuencia
 move $s2, $a0 #Numero de turno, se usa para saber cuantas veces imprimir
 
 loop:
