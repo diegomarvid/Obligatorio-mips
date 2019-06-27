@@ -127,22 +127,53 @@ random:
     
 lw $v0, TMR2
   
-bgt $v0,0xFF00,random_reset 
- 
- li $t0,7
- multu $t0,$v0
- mflo $v0
- 
- andi $v0,$v0,0b11
- 
- sw $v0,TMR2
-
- random_reset:
+li $t0,0
+li $t1,753
+li $t2,17    
     
- sw $0,TMR2    
+random_loop:    
+
+beq $t0,7,random_fin    
+    
+multu $v0,$t1    
+mflo $v0
+
+addiu $v0,$v0,321    
+    
+rem $v0,$v0,17    
+    
+addiu $t0,$t0,1    
+
+j random_loop
+    
+   
+    
+    
+# bgt $v0,0xFFF0,random_reset 
+#  
+#  li $t0,151
+#  multu $t0,$v0
+#  mflo $v0
+#  
+#  addu $v0,$v0,321
+#  
+#  rem $v0,$v0,19
+#  
+#  sw $v0,TMR2
+#  
+#  andi $v0,$v0,0b11
+#  
+#  j random_fin
+# 
+#  random_reset:
+#     
+#  sw $0,TMR2    
+#  
+#  andi $v0,$v0,0b11
  
- andi $v0,$v0,0b11
- 
+ random_fin:
+    
+ andi $v0,$v0,0b11 
     
 jr $ra    
     

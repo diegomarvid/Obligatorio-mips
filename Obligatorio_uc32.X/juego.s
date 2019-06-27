@@ -20,6 +20,8 @@ sw $s2,8($sp)
 li $s1,1
 #  Guardo modo en s2    
 move $s2,$a0
+ 
+sw $0,PORTD    
     
 # Hago un sleep antes de mostrar secuencia
 li $a0,65000    
@@ -82,11 +84,12 @@ jr $ra
 #   En $a0 recibe el turno para agregar un valor al final de la secuencia.
 extender_secuencia:
 
-addiu $sp,$sp,-8
+addiu $sp,$sp,-12
 sw $ra,($sp)
-sw $s0,4($sp)    
+sw $s0,4($sp)
+sw $s1,8($sp)     
     
-move $t1,$a0
+move $s1,$a0
 la $s0, secuencia
 
 #   Genero RANDOM en $v0
@@ -95,13 +98,14 @@ jal random
 #   El ultimo lugar del array es: direccion_array+turno-1.
 
 #   Direccion de array + turno
-addu $s0,$s0,$t1
+addu $s0,$s0,$s1
 #   direccion_array+turno-1
 sb $v0,-1($s0)
     
 lw $ra,($sp) 
-lw $s0,4($sp)    
-addiu $sp,$sp,8
+lw $s0,4($sp)
+lw $s1,8($sp)    
+addiu $sp,$sp,12
     
 jr $ra
 
