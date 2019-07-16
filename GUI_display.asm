@@ -16,19 +16,6 @@
 .globl imprimir_secuencia
 .globl volver_jugar
 
-#Data
-
-
-.data
-
-#Unit width in pixels: 32
-#Unit height in pixels: 32
-#Display width in Pixels: 256
-#Display Height in pixels: 256
-#Base address: static data
-
-#display: .space 256
-
 
 .text
 

@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Usuario/Documents/GitHub/Obligatorio-mips/Obligatorio_uc32.X/main.s</file>
-            <file>file:/C:/Users/Usuario/Documents/GitHub/Obligatorio-mips/Obligatorio_uc32.X/GUI_display.s</file>
-            <file>file:/C:/Users/Usuario/Documents/GitHub/Obligatorio-mips/Obligatorio_uc32.X/juego.s</file>
-            <file>file:/C:/Program%20Files%20(x86)/Microchip/xc32/v2.20/pic32mx/lib/crt0.S</file>
+            <file>file:/C:/Users/alumnoFI/Desktop/Entrega%20ASD%20DMVO/Codigo/MPLAB/obligatorio_placa.X/juego.s</file>
+            <file>file:/C:/Users/alumnoFI/Desktop/Entrega%20ASD%20DMVO/Codigo/MPLAB/obligatorio_placa.X/GUI_Display.s</file>
+            <file>file:/C:/Users/alumnoFI/Desktop/Entrega%20ASD%20DMVO/Codigo/MPLAB/obligatorio_placa.X/GUI_Control.s</file>
+            <file>file:/C:/Users/alumnoFI/Desktop/Entrega%20ASD%20DMVO/Codigo/MPLAB/obligatorio_placa.X/main.s</file>
         </group>
     </open-files>
 </project-private>

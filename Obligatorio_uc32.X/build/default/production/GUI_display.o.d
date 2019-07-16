@@ -1,2 +1,2 @@
-build/default/production/GUI_display.o:  \
-GUI_display.s 
+build/default/production/GUI_Display.o:  \
+GUI_Display.s 

@@ -47,6 +47,10 @@
     li $t0,0x8000
     sw $t0,T2CON # Modo
     
+    li $t0,0x8000
+    sw $t0,T1CON # Para el random
+    
+    
  
     init:
       

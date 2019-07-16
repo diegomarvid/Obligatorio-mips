@@ -24,14 +24,14 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Obligatorio_uc32.X
+PROJECTNAME=obligatorio_placa.X
 
 # Active Configuration
 DEFAULTCONF=default
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=default Copy_of_default 
+ALLCONFS=default 
 
 
 # build
@@ -46,14 +46,12 @@ ALLCONFS=default Copy_of_default
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=default clean
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=Copy_of_default clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
 	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=default build
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=Copy_of_default build
 
 
 

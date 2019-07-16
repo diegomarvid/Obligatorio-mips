@@ -1,4 +1,3 @@
-
     .globl get_play
     
     .text
@@ -26,13 +25,14 @@
     # Tiempo actual
     lw $t0, TMR2
     
-    
+    # Perder por tiempo.
     beq $t0,45000,error_get_play
     
     # Cargo los botones
     lw $t4,PORTE
     andi $t4,$t4,0b1111
     
+    # Asocio el valor obtenido del boton con su color.
     beq $t4,1,jugada_verde
     beq $t4,2,jugada_rojo
     beq $t4,4,jugada_azul
@@ -68,5 +68,4 @@
    fin_get_play:
     
 jr $ra 
-
 

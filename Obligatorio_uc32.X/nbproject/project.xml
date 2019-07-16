@@ -3,8 +3,8 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Obligatorio_uc32</name>
-            <creation-uuid>9e38c3b5-4570-44d1-9109-cfc9862d4477</creation-uuid>
+            <name>obligatorioPlaca</name>
+            <creation-uuid>3ea1dc52-e798-4a6f-8e95-2b08ff1d450a</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions/>
             <cpp-extensions/>
@@ -12,22 +12,6 @@
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList>
-                <sourceRootElem>.</sourceRootElem>
-            </sourceRootList>
-            <confList>
-                <confElem>
-                    <name>default</name>
-                    <type>2</type>
-                </confElem>
-                <confElem>
-                    <name>Copy_of_default</name>
-                    <type>2</type>
-                </confElem>
-            </confList>
-            <formatting>
-                <project-formatting-style>false</project-formatting-style>
-            </formatting>
         </data>
     </configuration>
 </project>

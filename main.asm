@@ -1,5 +1,15 @@
 .globl main
-
+#*******************BITMAP CONFIGURATION*****************************#
+#Unit width in pixels: 32
+#Unit height in pixels: 32
+#Display width in Pixels: 256
+#Display Height in pixels: 256
+#Base address: static data
+#Cuadrante 1 = 0,1,4,5
+#Cuadrante 2 = 2,3,6,7
+#Cuadrante 3 = a,b,e,f
+#Cuadrante 4 = 8,9,c,d
+#********************************************************************#
 
 #Data:
 
@@ -68,7 +78,7 @@ ganador_str: .asciiz "Felicitaciones, ganaste!!! \n"
 ganador_title_str: .asciiz " "
 higscore_title: .asciiz "El highscore es:\n"
 #Highscore
-ingreso_nombre_str: .asciiz "Ingrese nombre de jugador: " 
+ingreso_nombre_str: .asciiz "Ingrese nombre de jugador (maximo 3 caracteres): " 
 #Imprimir
 decisionstr: .asciiz "Desea volver a jugar? \n"
 #File

@@ -1,4 +1,3 @@
-.globl extender_secuencia
 .globl display_light
 .globl imprimir_secuencia    
 .globl secuencia
@@ -120,17 +119,21 @@ addiu $sp,$sp,4
     
 jr $ra
     
+    
 # ******************RANDOM********************* #
     
     
 random:
-    
+   
 lw $v0, TMR2
-  
-li $t0,0
-li $t1,753
-li $t2,17    
+lw $t0, TMR1
+addu $v0,$v0,$t0
     
+li $t0,0
+li $t1,751
+li $t2,17    
+  
+# Creo random con una secuencia de valor inicial el tiempo actual.    
 random_loop:    
 
 beq $t0,7,random_fin    
@@ -138,7 +141,7 @@ beq $t0,7,random_fin
 multu $v0,$t1    
 mflo $v0
 
-addiu $v0,$v0,321    
+addiu $v0,$v0,331    
     
 rem $v0,$v0,17    
     
@@ -146,36 +149,13 @@ addiu $t0,$t0,1
 
 j random_loop
     
-   
+random_fin:
     
-    
-# bgt $v0,0xFFF0,random_reset 
-#  
-#  li $t0,151
-#  multu $t0,$v0
-#  mflo $v0
-#  
-#  addu $v0,$v0,321
-#  
-#  rem $v0,$v0,19
-#  
-#  sw $v0,TMR2
-#  
-#  andi $v0,$v0,0b11
-#  
-#  j random_fin
-# 
-#  random_reset:
-#     
-#  sw $0,TMR2    
-#  
-#  andi $v0,$v0,0b11
- 
- random_fin:
-    
- andi $v0,$v0,0b11 
+sw $0, TMR1    
+rem $v0,$v0,4 
     
 jr $ra    
+    
     
 # *********************SLEEP****************** # 
     
@@ -198,7 +178,10 @@ sleep_fin:
     
 jr $ra 
     
+
+# ****************ANIMACIONES*******************#
     
+# ********PERDER********#    
 animacion_perder:
 
 addiu $sp,$sp,-8
@@ -304,7 +287,9 @@ lw $s1,4($sp)
 addiu $sp,$sp,8       
     
  jr $ra   
-    
+ 
+ 
+# **********GANAR********** #
 animacion_ganar:
     
 addiu $sp,$sp,-8
@@ -339,7 +324,3 @@ lw $s1,4($sp)
 addiu $sp,$sp,8    
     
 jr $ra    
-    
-    
-    
-    

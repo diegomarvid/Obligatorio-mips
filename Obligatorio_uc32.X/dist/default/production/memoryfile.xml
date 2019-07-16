@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/production/Obligatorio_uc32.X.production.elf">                 
+  <executable name="dist/default/production/obligatorio_placa.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>531968</length>                 
-      <used>2900</used>                     
-      <free>529068</free>                     
+      <used>3300</used>                     
+      <free>528668</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 

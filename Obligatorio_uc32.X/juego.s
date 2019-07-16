@@ -16,14 +16,13 @@ sw $ra,($sp)
 sw $s1,4($sp)
 sw $s2,8($sp)
 
-#  Guardo turno en s1
+#  Guardo turno en s1.
 li $s1,1
-#  Guardo modo en s2    
+#  Guardo modo en s2.   
 move $s2,$a0
  
+# Apago un tiempo antes de mostrar secuencia.   
 sw $0,PORTD    
-    
-# Hago un sleep antes de mostrar secuencia
 li $a0,65000    
 jal sleep    
     
@@ -52,25 +51,19 @@ beqz $v0,juego_perder
 
 #   ACTUALIZO TURNO
 addiu $s1,$s1,1
-
-    
-    
+   
 j game_loop
+    
     
 juego_perder:
     
 jal animacion_perder     
     
-li $v0,0 
-    
 j juego_fin
     
 juego_gane:
     
-jal animacion_ganar
-    
-li $v0,1    
-
+jal animacion_ganar    
 
 juego_fin:
 lw $ra,($sp)
@@ -294,4 +287,5 @@ modo_rewind:
  addiu $sp,$sp,20
 
  jr $ra
+
 
